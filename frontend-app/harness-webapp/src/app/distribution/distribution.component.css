@@ -1,168 +1,81 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900");
-@import url("https://cdn.linearicons.com/free/1.0.0/icon-font.min.css");
-body {
-  font-family: 'Montserrat', sans-serif;
-  background: #112233;
-}
 
-.weather-card {
-  margin: 60px auto;
-  height: 450px;
-  width: 750px;
-  background: #fff;
-  box-shadow: 0 2px 38px rgba(0, 0, 0, 0.011), 0 5px 12px rgba(0, 0, 0, 0.122);
-  overflow: hidden;
-  border: 1px solid #ccc!important;
-  border-radius: 16px;
-
-}
-
-
-.weather-card .top {
-  position: relative;
-  height: 450px;
-  width: 750px;
-  overflow: hidden;
-  background-color: black;
-  background-size: cover;
-  background-position: center center;
-  text-align: center;
-}
-.weather-card .top .wrapper {
-  padding: 30px;
-  position: relative;
-  z-index: 1;
-}
-.weather-card .top .wrapper .mynav {
-  height: 20px;
-}
-.weather-card .top .wrapper .mynav .lnr {
-  color: #fff;
-  font-size: 20px;
-}
-.weather-card .top .wrapper .mynav .lnr-chevron-left {
-  display: inline-block;
-  float: left;
-}
-.weather-card .top .wrapper .mynav .lnr-cog {
-  display: inline-block;
-  float: right;
-}
-.weather-card .top .wrapper .heading {
-  margin-top: 20px;
-  font-size: 35px;
-  font-weight: 400;
-  color: #fff;
-}
-.weather-card .top .wrapper .location {
-  margin-top: 20px;
-  font-size: 21px;
-  font-weight: 400;
-  color: #fff;
-}
-.weather-card .top .wrapper .temp {
-  margin-top: 20px;
-}
-.weather-card .top .wrapper .temp a {
-  text-decoration: none;
-  color: #fff;
-}
-.weather-card .top .wrapper .temp a .temp-type {
-  font-size: 85px;
-}
-.weather-card .top .wrapper .temp .temp-value {
-  display: inline-block;
-  font-size: 85px;
-  font-weight: 600;
-  color: #fff;
-}
-.weather-card .top .wrapper .temp .deg {
-  display: inline-block;
-  font-size: 35px;
-  font-weight: 600;
-  color: #fff;
-  vertical-align: top;
-  margin-top: 10px;
-}
-.weather-card .top:after {
-  content: "";
-  height: 100%;
-  width: 100%;
+:host {
   display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.5);
+  font-family: 'Montserrat', sans-serif;
+  color: #00175a;
 }
-.weather-card .bottom {
-  background-color: #000;
 
+.dist-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
 }
-.weather-card .bottom .wrapper .forecast {
-  overflow: hidden;
+
+.dist-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: #006fcf;
+  margin: 0 0 0.35rem;
+  font-weight: 700;
+}
+
+.dist-header h1 {
   margin: 0;
-  font-size: 0;
-  padding: 0;
-  padding-top: 20px;
-  max-height: 155px;
+  font-size: 1.75rem;
 }
-.weather-card .bottom .wrapper .forecast a {
-  text-decoration: none;
-  color: #000;
+
+.subtitle {
+  margin: 0.4rem 0 0;
+  color: #445;
 }
-.weather-card .bottom .wrapper .forecast .go-up {
-  text-align: center;
-  display: block;
-  font-size: 25px;
-  margin-bottom: 10px;
+
+.dist-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
-.weather-card .bottom .wrapper .forecast li {
-  display: block;
-  font-size: 25px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.25);
-  line-height: 1em;
-  margin-bottom: 30px;
+
+.icon-btn {
+  background: #00175a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
-.weather-card .bottom .wrapper .forecast li .date {
-  display: inline-block;
-}
-.weather-card .bottom .wrapper .forecast li .condition {
-  display: inline-block;
-  vertical-align: middle;
-  float: right;
-  font-size: 25px;
-}
-.weather-card .bottom .wrapper .forecast li .condition .temp {
-  display: inline-block;
-  vertical-align: top;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 20px;
-  font-weight: 400;
-  padding-top: 2px;
-}
-.weather-card .bottom .wrapper .forecast li .condition .temp .deg {
-  display: inline-block;
-  font-size: 10px;
+
+.back-link {
+  color: #006fcf;
   font-weight: 600;
-  margin-left: 3px;
-  vertical-align: top;
-}
-.weather-card .bottom .wrapper .forecast li .condition .temp .temp-type {
-  font-size: 20px;
-}
-.weather-card .bottom .wrapper .forecast li.active {
-  color: rgba(0, 0, 0, 0.8);
-}
-.weather-card.rain .top {
-  background: url("../../assets/testing.png") no-repeat;
-  background-size: cover;
-  background-position: center center;
+  text-decoration: none;
 }
 
+.chart-card {
+  background: #00175a;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 12px 32px rgba(0, 23, 90, 0.2);
+}
 
-.ngx-charts-outer {
-  text{
-      fill: #fff!important;
-  }
+.chart-wrap {
+  height: 360px;
+  width: 100%;
+}
+
+.ngx-charts-outer text {
+  fill: #fff !important;
 }

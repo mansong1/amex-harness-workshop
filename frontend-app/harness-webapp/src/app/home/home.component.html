@@ -1,135 +1,87 @@
+@if (ordersDegraded) {
+  <div class="rollback-banner" role="alert">
+    Orders service unavailable — canary will roll back
+  </div>
+}
 
+<div class="dashboard">
+  <header class="dashboard__header">
+    <div>
+      <p class="eyebrow">Account overview</p>
+      <h1>Member Card Dashboard</h1>
+      <p class="subtitle">Release status, member profile, and traffic validation for the workshop canary.</p>
+    </div>
+    <div class="release-badge" [class.release-badge--canary]="isCanary" [class.release-badge--stable]="!isCanary">
+      <span class="release-badge__label">{{ isCanary ? 'CANARY' : 'STABLE' }}</span>
+      <span class="release-badge__version">{{ applicationVersion || 'n/a' }}</span>
+      <span class="release-badge__meta">{{ deploymentType }}</span>
+    </div>
+  </header>
 
-<div class="container" style="background-color: black; width:100%">
-	<div class="row">
-  
-		<div class="col">
-			<div class="weather-card one" style="background-color:black">
-				<div class="top">
-          @if(checkValue()){
-            <div class="wrapper"  style=" background: linear-gradient(to bottom, black, rgba(0, 128, 0, 0.247) 50%, black);height: 600px; ">
-              <div class="mynav">
-                <a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-                <a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-              </div>
-              <h1 class="heading" style="color: rgb(255, 255, 255);">Events</h1>
-
-              
-
-              <div style="margin-top:10%">
-                <p style="color:white">
-                  Discover DevOps innovations with Harness at worldwide events, reshaping the future of modern software delivery.
-                </p>
-
-              </div>
-    
-
-            </div>
-
-
-          }
-         
-
-         @if(isCanary){
-              <div class="wrapper"  style="background: url('../../assets/canary-standing.png');height: 600px; ">
-                <div class="mynav">
-                  <a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-                  <a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-                </div>
-                <h1 class="heading" style="color: rgb(28, 198, 28);">{{serviceName}}</h1>
-                <div class="weather-card" style="background-color: rgba(58, 133, 218, 0.758); margin-top:200px; height: 100px;
-                width: 350px;">
-                              <h1 class="heading" style="font-size: 20px;color: rgb(28, 198, 28);">Version</h1>
-                              <h3 class="location" style="font-size: 16px;">{{applicationVersion}}</h3>
-
-                </div>
-
-                <div class="weather-card" style="background-color:  rgba(58, 133, 218, 0.758);  height: 100px;
-                width: 350px;">
-                              <h1 class="heading" style="font-size: 20px;color: rgb(28, 198, 28);">Last Execution</h1>
-                              <h3 class="location" style="font-size: 16px;">{{lastExecution}}</h3>
-
-                </div>
-
-
-              </div>
-
-
-            }
-          @else {
-              <div class="wrapper"   style=" background: linear-gradient(to bottom, black, rgba(0, 34, 128, 0.598) 50%, black);height: 600px; ">
-
-
-                  <div class="mynav">
-                    <a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-                    <a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-                  </div>
-                  <h1 class="heading" style="color: #FFFFFF">{{serviceName}}</h1>
-  
-                  <div class="weather-card" style="background-color: #ffffff20;   height: 100px;
-                  width: 350px;">
-                                <h1 class="heading" style="font-size: 20px;color: #FFFFFF">Version</h1>
-                                <h3 class="location" style="font-size: 16px;">{{applicationVersion}}</h3>
-  
-                  </div>
-  
-                  <div class="weather-card" style="background-color:  #ffffff20;  height: 100px;
-                  width: 350px;">
-                                <h1 class="heading" style="font-size: 20px;color:#FFFFFF ">Last Execution</h1>
-                                <h3 class="location" style="font-size: 16px;">{{lastExecution}}</h3>
-  
-                  </div>
-  
-       
-
-              </div>
-
-
-
-            }
-
-          </div>
-          @if  (!checkValue()) {
-            <div class="bottom" >
-              <button type="button" class="btn btn-success" style="width:90%;margin:5%" (click)="checkRelase()">Check Release</button>
-            </div>
-          }
-          @else {
-
-            <div class="bottom" >
-              <a href="https://www.harness.io/events"  class="btn btn-success" style="width:90%;margin:5%">Learn more</a>
-             
-            </div>
-          }
-
-
+  <div class="dashboard__grid">
+    <section class="card card--plastic" [class.card--canary]="isCanary">
+      <div class="card__chip"></div>
+      <div class="card__brand">MEMBER</div>
+      <div class="card__number">•••• •••• •••• {{ member?.card_last4 || '1005' }}</div>
+      <div class="card__footer">
+        <div>
+          <div class="card__label">Card Member</div>
+          <div class="card__value">{{ memberName }}</div>
         </div>
+        <div>
+          <div class="card__label">Service</div>
+          <div class="card__value">{{ serviceName || 'workshop-backend' }}</div>
+        </div>
+      </div>
+    </section>
 
-		</div>
+    <section class="panel">
+      <h2>Release</h2>
+      <dl class="facts">
+        <div>
+          <dt>Deployment</dt>
+          <dd>{{ isCanary ? 'canary' : 'stable / normal' }}</dd>
+        </div>
+        <div>
+          <dt>Image / version</dt>
+          <dd>{{ applicationVersion || 'n/a' }}</dd>
+        </div>
+        <div>
+          <dt>Last execution</dt>
+          <dd>{{ lastExecution || 'n/a' }}</dd>
+        </div>
+        <div>
+          <dt>Health</dt>
+          <dd>{{ healthStatus }}</dd>
+        </div>
+      </dl>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" (click)="checkRelase()">Check Release</button>
+        <button type="button" class="btn btn-outline" (click)="distribution()">Start Distribution Test</button>
+      </div>
+    </section>
 
-		<div class="col">
-			<div class="weather-card rain" style="background-color: black;">
-
-				<div class="top">
-					<div class="wrapper">
-						<div class="mynav">
-							<a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-							<a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-						</div>
-						<h1 class="heading">Distribution Test</h1>
-						<h3 class="location">Synthetic Test</h3>
-						<p class="temp">
-
-						</p>
-					</div>
-				</div>
-				<div class="bottom">
-				<button type="button" class="btn btn-success" style="width:90%;margin:5%" (click)="distribution()" >Start</button>
-
-				</div>
-			</div>
-		</div>
-
-
-	</div>
+    <section class="panel panel--member">
+      <h2>Member profile</h2>
+      <dl class="facts">
+        <div>
+          <dt>Name</dt>
+          <dd>{{ memberName }}</dd>
+        </div>
+        <div>
+          <dt>Email</dt>
+          <dd>{{ member?.email || '—' }}</dd>
+        </div>
+        @if (hasRewardsTier) {
+          <div class="rewards-row">
+            <dt>Rewards tier</dt>
+            <dd class="rewards-tier">{{ member.rewards_tier }}</dd>
+          </div>
+        }
+      </dl>
+      @if (!hasRewardsTier) {
+        <p class="hint">Rewards tier appears after the DB3 schema change adds <code>rewards_tier</code>.</p>
+      }
+    </section>
+  </div>
 </div>
