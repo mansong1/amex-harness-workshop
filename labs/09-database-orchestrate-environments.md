@@ -10,9 +10,9 @@
 
 ## Overview
 
-In this lab, the user promotes a database change through multiple environments — **dev, staging, and production** — using a single orchestrated pipeline. Each stage applies the change to a different target database with environment-specific configurations, policies, and approval steps. 
+In this lab, the user promotes a database change through multiple environments - **dev, QA, and production** - using a single orchestrated pipeline. Each stage applies the change to a different target database with environment-specific configurations, policies, and approval steps. 
 
-As changes progress, the user can view which schema versions are deployed in each environment directly in the Harness UI — removing the need to manually track or document status.
+As changes progress, the user can view which schema versions are deployed in each environment directly in the Harness UI - removing the need to manually track or document status.
 
 ---
 

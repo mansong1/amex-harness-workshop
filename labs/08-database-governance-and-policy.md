@@ -10,7 +10,7 @@
 
 ## Overview
 
-In this lab, the user attempts to push a database changelog that **drops a table**—an action disallowed in this environment. The pipeline evaluates the change using integrated policy-as-code (OPA) rules and immediately blocks execution.
+In this lab, the user attempts to push a database changelog that **drops a table** - an action disallowed in this environment. The pipeline evaluates the change using integrated policy-as-code (OPA) rules and immediately blocks execution.
 
 The user reviews the policy failure, understands the violation, and updates the changelog to meet organizational standards before resubmitting.
 
@@ -84,7 +84,7 @@ deny[msg] {
 **Add the policy set in the pipeline**
 
 1. Navigate to the pipeline studio (in edit mode)
-2. Open the **Apply Change** step
+2. Open the **Schema Apply** step
 3. Within the step configuration and from the top navigation bar select **Advanced**
 4. Expand the **Policy Enforcement** section
 5. Click on **Add/Modify Policy Set**
@@ -133,6 +133,6 @@ Review pipeline output and logs
 | :--- | :--- |
 | **Guardrails, Not Roadblocks** | Policies surface issues early without slowing down developers who follow best practices. |
 | **Standardized Governance** | Approval workflows and checks are consistent across teams, environments, and databases. |
-| **Policy-as-Code** | Governance is defined in code and version-controlled—just like everything else. |
+| **Policy-as-Code** | Governance is defined in code and version-controlled - just like everything else. |
 | **Risk Reduction** | Disallowed or unsafe changes are caught before they affect production. |
 | **Scalable Compliance** | Teams can move fast while meeting security and audit requirements at scale. |

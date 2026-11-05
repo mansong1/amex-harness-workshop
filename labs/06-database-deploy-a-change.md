@@ -123,7 +123,7 @@ In your configured Git repo, add a changeSet **after the existing changeset** to
 The pipeline will automatically trigger:
 The schema change will be applied to the target database.
 
-### Value Callouts
+## Value Callouts
 | Aspect | Description |
 | :--- | :--- |
 | **Familiar Workflow** | Developers stay in Git. |

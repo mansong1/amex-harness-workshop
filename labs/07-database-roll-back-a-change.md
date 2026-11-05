@@ -1,22 +1,22 @@
 # Lab 7: Database DevOps - Roll Back a Change
 
-### Key Outcomes
+## Key Outcomes
 - Safe failure handling  
 - Pre-validated rollback plans  
 - Confidence in change velocity  
 
 ---
 
-### Overview
+## Overview
 In this lab, the user intentionally deploys a database changelog that introduces a breaking or invalid change (for example, dropping a required column). The pipeline detects the failure during deployment to a non-production environment and automatically triggers a rollback using a predefined backout script.
 
 This simulates a real-world scenario where a change fails validation or breaks application behavior, and highlights how Harness enables fast recovery without manual intervention or firefighting.
 
 ---
 
-### Walkthrough
+## Walkthrough
 
-#### Step 1: Add a Rollback Step
+### Step 1: Add a Rollback Step
 1. Navigate to your pipeline and locate the step group containing your **Schema Apply** step.  
 2. Hover to the right of the **Schema Apply** step and click the **➕** icon to add a new step to the right of the existing step.
 
@@ -24,7 +24,7 @@ This simulates a real-world scenario where a change fails validation or breaks a
 
    
 3. From the list of steps find and select the **Rollback Schema** step.
-5. Configure accordingly:
+4. Configure accordingly:
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
@@ -43,7 +43,7 @@ This simulates a real-world scenario where a change fails validation or breaks a
 
 ---
 
-#### Step 2: Push a Breaking Change to Git
+### Step 2: Push a Breaking Change to Git
 In your configured Git repository, add a changeSet that attempts to make an invalid change:
 
 ```yaml
@@ -67,7 +67,7 @@ In your configured Git repository, add a changeSet that attempts to make an inva
 
 Commit and push the change to the main branch.
 
-### Result
+## Result
 
 The pipeline will automatically trigger:
 1. The breaking change will attempt to apply and fail. **Can you identify why?**
@@ -75,10 +75,10 @@ The pipeline will automatically trigger:
 3. The environment will be restored to a stable state.
 4. Navigate to **Overview** under the Database DevOps module and review the change sets versions and status
 
-### Value Callouts
+## Value Callouts
 
 | Aspect | Description |
 | :--- | :--- |
 | **Automatic Rollbacks** | Backout plans are pre-validated and ready to run, reducing mean time to recovery (MTTR) |
-| **No Manual Intervention:** | Developers do not need to SSH into environments or locate old scripts—rollback is built into the pipeline. |
+| **No Manual Intervention:** | Developers do not need to SSH into environments or locate old scripts - rollback is built into the pipeline. |
 | **Resilience as Default** | Pipelines are designed to fail gracefully, keeping environments stable and deploy-ready. |

@@ -70,5 +70,5 @@ In this lab, the user creates and applies policies as code to enable governance 
 | Aspect | Description |
 | :--- | :--- |
 | **Guardrails, Not Roadblocks** | Policies surface issues early without slowing down developers who follow best practices. |
-| **Policy-as-Code** | Governance is defined in code and version-controlled—just like everything else. |
+| **Policy-as-Code** | Governance is defined in code and version-controlled - just like everything else. |
 | **Scalable Compliance** | Teams can move fast while meeting security and audit requirements at scale. |
