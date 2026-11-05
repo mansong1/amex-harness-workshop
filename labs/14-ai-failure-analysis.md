@@ -1,0 +1,110 @@
+# Lab 14: AI Failure Analysis with a Worker Agent
+
+## Key Outcomes
+- Understand how a custom Harness Worker Agent is defined
+- Run an AI agent inside the pipeline when a release rolls back
+- Turn the agent's findings into an audited ServiceNow change record
+
+## Overview
+In Lab 13 Harness rolled the release back and closed the change as **Unsuccessful**, but the release manager still has to work out *why* it failed. In this lab the user creates a **Failure Analyst** Worker Agent that runs in the rollback steps, uses the Harness MCP tools to diagnose the failed execution and publishes a root cause summary. The agent is read-only: a ServiceNow step writes its findings to the change request's work notes, so every action on the change record still comes from the pipeline.
+
+---
+
+## Walkthrough
+
+### Step 1: Review the Failure Analyst Agent
+Your project has been provisioned with a **Failure Analyst** Worker Agent (identifier `failure_analyst`).
+
+1. From the module selection menu select **AI Agents** and then **Worker Agents**
+2. Select the **Custom** tab and open **Failure Analyst**
+3. Switch to the **YAML** tab. The definition is the following
+
+![Failure Analyst YAML](../images/lab10-agent-yaml.png "Failure Analyst YAML")
+
+```yaml
+agent:
+  uses: harnessAI@1.0.0
+  with:
+    prompt: |
+      You are the Failure Analyst for a production release that Harness has just rolled back.
+      Find out why the release failed and explain it to the release manager who owns the ServiceNow change.
+
+      ## Release context
+      - Harness organization <org_id>, project <project_id>, pipeline workshop
+      - Service backend, environment prod, Kubernetes namespace devsecops-<project_id>
+      - The release you are analysing is the pipeline execution this step runs in. Its ID is in the HARNESS_EXECUTION_ID environment variable. If that variable is empty, use the most recent execution of the workshop pipeline
+
+      ## Task
+      Use the Harness MCP tools only. You have a budget of 15 tool calls, so do not retry a call that fails.
+      1. Diagnose the execution and find the backend stage step that failed first: usually Canary Smoke Test (smoke tests run against the canary) or Verify (continuous verification of the canary against Prometheus metrics)
+      2. Read that step's failure message and logs: for Canary Smoke Test, which check failed and the error it returned, and for Verify, which metric breached its threshold
+      3. Decide the most likely cause of the failed release
+
+      When you finish, output these variables:
+      - FAILURE_CATEGORY: one of MEMORY, CPU, CRASH, ERRORS, UNKNOWN
+      - FAILURE_SUMMARY: at most 3 sentences of plain text, without line breaks or double quotes, naming the failed step, the evidence you found, and the recommended next step
+
+      ## RULES
+      - You are read-only: never change, run, retry or abort anything in Harness
+      - Only report evidence you retrieved; if you could not retrieve any, say so and set FAILURE_CATEGORY to UNKNOWN
+      - Keep FAILURE_SUMMARY under 600 characters
+      - Always output both variables, even if your analysis is incomplete
+    connector: account.harnessAnthropic
+    allowed_domains: harness.io
+    max_turns: "30"
+```
+
+4. Close the agent without making changes
+
+> [!NOTE]
+> Agent instructions only resolve `<+inputs.*>`, `<+trigger.*>` and `<+secret.getValue()>` expressions, so your organization and project were filled in when the agent was provisioned, and the agent reads the execution ID from the `HARNESS_EXECUTION_ID` environment variable. The agent talks to Harness through the built-in Harness MCP server, and `account.harnessAnthropic` is the Harness-managed model connector, so no API keys are needed.
+
+---
+
+### Step 2: Run the Agent on Rollback
+1. From the module selection menu select **Continuous Delivery & GitOps** and open your pipeline
+2. In the **backend** stage **Execution**, toggle the **Rollback** view
+3. Hover between **Rolling Rollback** and **Close Failed Ticket**, click **+**, select **Use template** and choose **Failure Analysis**
+
+| Input      | Value     | Notes |
+| ---------- | ----------------------  | ----- |
+| Name | <pre>`Failure Analysis`</pre>| Keep this name, the ServiceNow template reads the agent's output from it |
+
+4. Click **Apply Changes**. The template is a containerized step group on **k8s-prod** in your `devsecops-<project_id>` namespace, so the agent runs next to the application. It holds two steps: the **Agent** step **Failure Analyst**, using the stable version of the agent, and a **Run** step **Publish Analysis** that reads the agent's output file and exports **FAILURE_CATEGORY** and **FAILURE_SUMMARY** as output variables, because Agent step outputs are only exported in CI stages. Its failure strategy is **Ignore** so the rollback always finishes, even if the agent can't
+5. After the **Failure Analysis** step group, click **+**, select **Use template** and choose **ServiceNow Failure Analysis**
+
+| Input      | Value     | Notes |
+| ---------- | ----------------------  | ----- |
+| Name | <pre>`Record Failure Analysis`</pre>| Adds the agent's category and summary to the change request's work notes |
+
+6. On the step's **Advanced** tab, under **Conditional Execution**, select **Always execute this step**, and set the **Failure Strategy** for **All Errors** to **Ignore**, so the work note is recorded even if the agent fails and **Close Failed Ticket** still runs
+7. Apply the changes and **Save** the pipeline. The rollback steps are now **Canary Delete**, **Rolling Rollback**, **Failure Analysis**, **Record Failure Analysis** and **Close Failed Ticket**
+
+![Rollback steps with Failure Analysis](../images/lab10-rollback-studio.png "Rollback steps with Failure Analysis")
+
+---
+
+### Step 3: Run and Review
+1. Click **Run**, approve the change in ServiceNow and approve the Harness Approval steps as before
+2. The **Canary Smoke Test** from Lab 13 fails and Harness rolls the stage back
+3. Expand the **Failure Analysis** step group, then expand **Failure Analyst** and open **failure_analyst_1**. The logs show the agent diagnosing the execution with the Harness MCP tools, reasoning about the results and finishing with its failure analysis summary
+
+![Failure Analyst logs](../images/lab10-agent-run.png "Failure Analyst logs")
+
+4. Open **Publish Analysis**: its **Output** tab shows **FAILURE_CATEGORY** and **FAILURE_SUMMARY**, which the **Record Failure Analysis** step reads with `<+pipeline.stages.backend.spec.execution.rollbackSteps.Failure_Analysis.steps.Publish_Analysis.output.outputVariables.FAILURE_SUMMARY>`
+
+![Publish Analysis output](../images/lab10-publish-output.png "Publish Analysis output")
+5. Open the change request in ServiceNow. The **Notes** tab has a work note from the Failure Analyst with the root cause, and the change is **Closed** with close code **Unsuccessful**
+
+![Failure Analyst work note](../images/lab10-snow-worknote.png "Failure Analyst work note")
+
+---
+
+## Value Callouts
+
+| Aspect | Description |
+| :--- | :--- |
+| **Faster Root Cause** | The release manager gets an explanation with evidence the moment a release fails, not hours later. |
+| **Agents Inside the Pipeline** | Worker Agents run in the same governed pipeline as every other step, with the same RBAC, audit trail and failure strategies. |
+| **Human-readable Change Records** | ServiceNow captures why a change failed, not just that it did. |
+| **Safe by Design** | The agent is read-only; only the pipeline's ServiceNow step changes the change record, and a failed agent never blocks the rollback. |

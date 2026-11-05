@@ -1,0 +1,8 @@
+node_modules/
+.angular/
+__pycache__/
+*.pyc
+.idea/
+.vscode/
+debug.log
+dist/
