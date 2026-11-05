@@ -28,7 +28,7 @@ In regulated environments you can't ship to production without following change 
 4. Select your most recent pipeline save, click **Apply** and then click **Test**. What do you think will happen?
 
 > [!NOTE]
-> Lab 10 required a Harness Approval step **inside** each deployment stage. Change policy goes further and requires an approval stage **before** any deployment stage, so the test fails. Failure is success, the policy is working as designed
+> Lab 10 required a Harness Approval step **inside** each deployment stage (frontend got one there; backend already had Lab 4's). Change policy goes further and requires an approval stage **before** any deployment stage, so the test fails. Failure is success, the policy is working as designed
 
 ![Policy as Code](../images/lab7-opa.gif "Policy as Code")
 ![Policy test result](../images/lab7-policy-test.png "Policy test result")
@@ -108,7 +108,7 @@ In regulated environments you can't ship to production without following change 
 ![Change request](../images/lab7-snow-change.png "Change request")
 ![Implement](../images/lab7-snow-implement.png "Implement")
 
-5. Switch back to Harness and watch the pipeline continue once the approval criteria are met. Approve the Harness Approval steps from Lab 10 as they come up. When the backend stage completes, **Close Ticket** closes the change as **Successful**
+5. Switch back to Harness and watch the pipeline continue once the approval criteria are met. Approve the Harness Approval steps as they come up (frontend from Lab 10, backend from Lab 4). When the backend stage completes, **Close Ticket** closes the change as **Successful**
 
 > [!TIP]
 > The execution page doesn't always update on its own. If a step looks stuck, refresh the page.

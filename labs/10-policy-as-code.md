@@ -41,12 +41,11 @@ In this lab, the user creates and applies policies as code to enable governance 
 
 ### Step 2: Test the Policy
 1. Open your pipeline
-2. Try to run the pipeline and note the failure: the deployment stages do not have a **Harness Approval** step. The policy set evaluates **On Run**, so saving still works
+2. Try to run the pipeline and note the failure. The **frontend** stage has no **Harness Approval** step yet, so **Production Approvals** blocks the run. The **backend** stage already has the Approval from Lab 4, so it satisfies the policy on its own. The policy set evaluates **On Run**, so saving still works
 
 ---
 
-### Step 3: Add Approval Steps to Satisfy Policy
-**Frontend Stage**
+### Step 3: Add an Approval Step to the Frontend Stage
 1. Open the pipeline in edit mode and navigate to the **frontend** stage
 2. Before the rolling deployment step, add a **Harness Approval** step
 
@@ -59,12 +58,7 @@ In this lab, the user creates and applies policies as code to enable governance 
 > [!NOTE]
 > The step library calls this step **Harness Approval**, and the step panel calls it **Manual Approval**. They are the same step.
 
-3. Click **Apply Changes**
-
-**Backend Stage**
-1. Navigate to the **backend** stage
-2. Before the canary deployment block, add a **Harness Approval** step with the same configuration
-3. Click **Save** and then **Run**. The policy passes and the pipeline starts
+3. Click **Apply Changes**, then **Save** and **Run**. Both deployment stages now have an Approval, so the policy passes and the pipeline starts. Approve the frontend step when it pauses; the backend Approval from Lab 4 still sits between **Verify** and Canary Delete
 
 ---
 
