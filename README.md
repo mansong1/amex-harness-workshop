@@ -70,16 +70,6 @@ Some values shown in the labs are environment-specific (the code repository name
 | [`db/changelog.yaml`](db/changelog.yaml) | Starting Liquibase changelog for the Database DevOps labs |
 | [`images/`](images) | Screenshots and logos used by the instructions |
 
-## Credits
-
-This workshop combines and adapts material from three open workshop repositories:
-
-- [nikpapag/harness-devsecops-workshop](https://github.com/nikpapag/harness-devsecops-workshop) - the original DevSecOps lab series (Labs 1-6 and 15)
-- [mansong1/harness-devsecops-workshop](https://github.com/mansong1/harness-devsecops-workshop) - the change-management, guardrails, rollback and AI labs (Labs 11-14)
-- [nikpapag/harness-dbdevops-worksop](https://github.com/nikpapag/harness-dbdevops-worksop) - the Database DevOps lab series (Labs 6-9)
-
-None of the source repositories includes a license file, so reuse permission from the other authors is not formally settled. Until it is, treat this repository as internal enablement material and keep this credits section intact.
-
 ---
 
 <sub>American Express and the American Express Blue Box logo are trademarks of American Express. Harness and the Harness logo are trademarks of Harness Inc. This workshop is enablement material prepared for an instructor-led session and implies no endorsement by either company.</sub>
