@@ -28,7 +28,7 @@ An approval stage at the front of the pipeline is a good start, but production i
 
 4. Open your pipeline in Pipeline Studio, make a small change and click **Save**. The save is blocked for **both** stages: frontend deploys to **prod**, and backend is a protected service
 
-![Production Guardrail](../images/lab8-guardrail.gif "Production Guardrail")
+![Production Guardrail](../images/lab8-guardrail.png "Production Guardrail")
 ![Production Guardrail violation](../images/lab8-violation.png "Production Guardrail violation")
 
 ---
@@ -55,7 +55,7 @@ The **Change Verified Policy** denies the step if the change number doesn't star
 | ---------- | ----------------------  | ----- |
 | Name | <pre>`Change Verified`</pre>||
 
-![Add Change Verified](../images/lab8-add-step.gif "Add Change Verified")
+![Add Change Verified](../images/lab8-add-step.png "Add Change Verified")
 ![frontend stage](../images/lab8-frontend-step.png "frontend stage")
 
 2. Open the **backend** stage, go to **Execution** and add the same template **before** the **Canary Deployment** step group

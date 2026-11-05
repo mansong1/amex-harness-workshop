@@ -44,7 +44,7 @@ Your project has been provisioned with a **Canary Smoke Test** step template.
 3. On the step's **Advanced** tab, under **Conditional Execution**, select **Always execute this step**, so the change is closed even if an earlier rollback step fails
 4. Apply the changes and **Save** the pipeline
 
-![Add Close Failed Ticket](../images/lab9-rollback.gif "Add Close Failed Ticket")
+![Add Close Failed Ticket](../images/lab9-rollback.png "Add Close Failed Ticket")
 ![Rollback steps](../images/lab9-rollback-studio.png "Rollback steps")
 
 ---
