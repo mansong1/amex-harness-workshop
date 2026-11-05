@@ -98,8 +98,8 @@ Navigate to the **Execution** tab and add the following steps:
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Prepopulated |
+| Branch Name | <pre>`main`</pre>| Pre-populated |
 
 > [!WARNING]
-> Pipeline execution is rejected by the policy engine, let's create a compliant pipeline
-> Proceed to the Lab 2: DevSecOps
+> Pipeline execution is rejected by the policy engine. Let's create a compliant pipeline.
+> Proceed to Lab 2: DevSecOps.
