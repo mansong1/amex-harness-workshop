@@ -110,6 +110,10 @@ In regulated environments you can't ship to production without following change 
 
 5. Switch back to Harness and watch the pipeline continue once the approval criteria are met. Approve the Harness Approval steps from Lab 10 as they come up. When the backend stage completes, **Close Ticket** closes the change as **Successful**
 
+> [!TIP]
+> The execution page doesn't always update on its own. If a step looks stuck, refresh the page.
+
+
 ![Pipeline succeeded](../images/lab7-success.png "Pipeline succeeded")
 ![Change closed](../images/lab7-snow-closed.png "Change closed")
 

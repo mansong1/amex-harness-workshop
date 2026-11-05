@@ -54,7 +54,10 @@ In this lab, the user creates and applies policies as code to enable governance 
 | ---------- | ----------------------  | ----- |
 | Step Name | <pre>`Approval`</pre>||
 | Type of Approval | Harness Approval ||
-| User Groups | All Project Users ||
+| User Groups | All Project Users | Open the **Project** tab to find it |
+
+> [!NOTE]
+> The step library calls this step **Harness Approval**, and the step panel calls it **Manual Approval**. They are the same step.
 
 3. Click **Apply Changes**
 
