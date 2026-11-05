@@ -17,7 +17,7 @@ Welcome to the hands-on workshop prepared for **American Express**. Over the fol
 
 ## How the workshop fits together
 
-One journey in three parts. Each lab builds on the state left by the previous one, so run them in order.
+One journey in three parts. Within each part, every lab builds on the pipeline state from the one before it, so run the labs in order. The parts are loosely coupled: Part 2 builds its own Database DevOps pipeline and can run on its own, while Part 3 extends the Part 1 pipeline, so complete Part 1 before starting it.
 
 | | Lab | You will |
 | --- | --- | --- |
@@ -41,7 +41,7 @@ One journey in three parts. Each lab builds on the state left by the previous on
 | | [Lab 14: AI Failure Analysis](labs/14-ai-failure-analysis.md) | Put a Worker Agent to work diagnosing a rolled-back release |
 | | [Lab 15: Advanced Policy as Code](labs/15-advanced-policy-as-code.md) | Block critical CVEs from reaching production at runtime |
 
-**Format:** designed as a full-day, instructor-led workshop, and splits cleanly into two half-day sessions after Lab 5 and Lab 9.
+**Proposed format** (to be confirmed): one full instructor-led day, or three blocks of roughly two hours with the breaks between parts. Part 2 can also run standalone as a database-focused session.
 
 ## What is pre-provisioned for you
 
@@ -55,7 +55,7 @@ Your Harness project already contains everything the labs reference:
 - For the Database DevOps labs: the **DB** schema, database instances **DB1** (dev), **DB2** (QA) and **DB3** (production), and a `db_changes` Git repository - this repo's [`db/changelog.yaml`](db/changelog.yaml) is the starting changelog
 - The **lab_endpoint** project variable with your application's URL
 
-Connector names, repository names and the ServiceNow sandbox URL shown in the labs come from the reference environment; your instructor will confirm the values for your project.
+Some values shown in the labs are environment-specific (the code repository name, the Docker connector and repository, the ServiceNow sandbox). Before Lab 1, run the [preflight checks](labs/00-workshop-primer.md#environment-values-and-preflight-checks) in the primer - they list every value, what it must point to, and how to verify it.
 
 ## Repository layout
 
@@ -77,6 +77,8 @@ This workshop combines and adapts material from three open workshop repositories
 - [nikpapag/harness-devsecops-workshop](https://github.com/nikpapag/harness-devsecops-workshop) - the original DevSecOps lab series (Labs 1-6 and 15)
 - [mansong1/harness-devsecops-workshop](https://github.com/mansong1/harness-devsecops-workshop) - the change-management, guardrails, rollback and AI labs (Labs 11-14)
 - [nikpapag/harness-dbdevops-worksop](https://github.com/nikpapag/harness-dbdevops-worksop) - the Database DevOps lab series (Labs 6-9)
+
+None of the source repositories includes a license file, so reuse permission from the other authors is not formally settled. Until it is, treat this repository as internal enablement material and keep this credits section intact.
 
 ---
 

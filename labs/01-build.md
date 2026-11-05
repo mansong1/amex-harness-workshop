@@ -59,7 +59,7 @@ Navigate to the **Execution** tab and add the following steps:
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
 | Name | <pre>`Run Tests With Intelligence`</pre>||
-| Command | <pre>`pip install pytest & cd ./python-tests`</pre>| The GitHub repo is a monorepo with application(s) and configuration in the same repo. Therefore we need to navigate to the application subfolder. |
+| Command | <pre>`pip install pytest && cd ./python-tests`</pre>| The GitHub repo is a monorepo with application(s) and configuration in the same repo. Therefore we need to navigate to the application subfolder. |
 
 3. Click **Apply Changes**
 
