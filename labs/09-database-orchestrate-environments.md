@@ -46,7 +46,7 @@ As changes progress, the user can view which schema versions are deployed in eac
 | Select DB Schema     | DB||
 | Database Instance | DB2 || 
 
-4. Click **Apply Changes**.
+6. Click **Apply Changes**.
 
 
 ### Step 2: Add Production Stage (DB3)
@@ -78,7 +78,7 @@ As changes progress, the user can view which schema versions are deployed in eac
 | Select DB Schema     | DB||
 | Database Instance | DB3 || 
 
-4. Click **Apply Changes**.
+6. Click **Apply Changes**.
 
 
 ### Step 3: Save and Run the Pipeline
