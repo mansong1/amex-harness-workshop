@@ -80,5 +80,5 @@ The pipeline will automatically trigger:
 | Aspect | Description |
 | :--- | :--- |
 | **Automatic Rollbacks** | Backout plans are pre-validated and ready to run, reducing mean time to recovery (MTTR) |
-| **No Manual Intervention:** | Developers do not need to SSH into environments or locate old scripts - rollback is built into the pipeline. |
+| **No Manual Intervention** | Developers do not need to SSH into environments or locate old scripts - rollback is built into the pipeline. |
 | **Resilience as Default** | Pipelines are designed to fail gracefully, keeping environments stable and deploy-ready. |
