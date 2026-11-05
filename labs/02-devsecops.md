@@ -15,7 +15,7 @@ In this lab, the security team has implemented orchestration of **Fortify** and 
 ## Walkthrough
 
 ### Step 1: Add Security Scanning Steps
-1. In the existing pipeline, within the **Build** stage, **before** the **Push to DockerHub** step, click the **+** icon to add a new step
+1. In the existing pipeline, within the **Build** stage, **before** the **Push to HAR** step, click the **+** icon to add a new step
 2. Select **Use Template**
 
 ![](../images/lab02-use-template.png)
@@ -31,7 +31,7 @@ In this lab, the security team has implemented orchestration of **Fortify** and 
 ---
 
 ### Step 2: Add OWASP Scan
-1. In the existing pipeline, within the **Build** stage, **after** the **Push to DockerHub** step, click the **+** icon to add a new step
+1. In the existing pipeline, within the **Build** stage, **after** the **Push to HAR** step, click the **+** icon to add a new step
 2. Select **Use Template**
 3. Select **OWASP**
 
