@@ -64,9 +64,9 @@ The target infrastructure has been pre-created and was used in the previous stag
 | Branch Name | <pre>`main`</pre>||
 
 2. While the canary deployment is ongoing and waiting for approval, navigate to the web page and see if you can spot the canary (use the check release button)
-3. From the left hand side menu navigate to project settings
+3. From the left-hand side menu, navigate to **Project Settings**
 4. Select **project variables**
-5. The url can exist within the **lab_endpoint** variable 
+5. The URL is in the **lab_endpoint** variable.
 <img width="1692" height="302" alt="image" src="../images/lab04-lab-endpoint-variable.png" />
 
 
