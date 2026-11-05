@@ -5,7 +5,7 @@
 - Implement approval gates for production deployments  
 
 ## Overview
-In this lab, the user adds a backend deployment stage using a canary deployment strategy with manual approval gates to minimize risk during production releases.
+In this lab, the user adds a backend deployment stage using a canary deployment strategy with a manual approval gate and AI-driven continuous verification to minimize risk during production releases.
 
 ---
 
@@ -50,7 +50,10 @@ The target infrastructure has been pre-created and was used in the previous stag
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
 | Name | <pre>`Approval`</pre>||
-| User Groups | All Project Users | Select project to see the "All Project Users" option |
+| User Groups | All Project Users | Open the **Project** tab to see the "All Project Users" option |
+
+> [!NOTE]
+> The step library lists this step as **Harness Approval**, but the step panel is titled **Manual Approval**. They are the same step.
 
 3. Click **Apply Changes**
 
@@ -61,9 +64,10 @@ The target infrastructure has been pre-created and was used in the previous stag
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>||
+| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Primary Artifact | <pre>`backend`</pre>| Select it on the run form if it isn't already set |
 
-2. While the canary deployment is ongoing and waiting for approval, navigate to the web page and see if you can spot the canary (use the check release button)
+2. While the canary deployment is ongoing and waiting for approval, navigate to the web page and see if you can spot the canary (use the **Check Release** button). The button calls the backend on a separate host, `<username>.backend.<lab_subdomain>.harnessevents.com`. If your browser shows a certificate warning for it, open that host in a new tab once and accept the warning. Even then, the **Last Execution** box may stay blank
 3. From the left-hand side menu, navigate to **Project Settings**
 4. Select **project variables**
 5. The URL is in the **lab_endpoint** variable.
@@ -75,11 +79,10 @@ The target infrastructure has been pre-created and was used in the previous stag
 
 ---
 
-### Step 6: Replace manual approval with continuous verification
-1. Edit the existing pipeline 
-2. Select the backend stage and find the **Harness Approval** between the Canary Deploy and Canary Destroy steps
-3. Delete the **Harness Approval** step
-4. **After** the canary deployment and **before** the canary delete step, add a **Verify** step 
+### Step 6: Add continuous verification alongside the approval
+1. Edit the existing pipeline
+2. Select the backend stage and find the **Harness Approval** step between the Canary Deployment and Canary Delete steps. Keep it
+3. **After** the canary deployment and **before** the **Approval** step, add an **AI Verify (v1)** step. The step library no longer has a plain **Verify** step
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
@@ -87,11 +90,15 @@ The target infrastructure has been pre-created and was used in the previous stag
 | Continuous Verification Type | Canary ||
 | Duration | 5 min ||
 
-5. Click **Save** and then click **Run** to execute the pipeline
+The backend stage now runs Canary Deployment, then **Verify**, then **Approval**, then Canary Delete. Verify checks the canary's metrics first, and a person signs off only once they pass.
 
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>||
+4. Click **Save** and then click **Run** to execute the pipeline
+
+| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Primary Artifact | <pre>`backend`</pre>||
+
+> [!TIP]
+> The execution page doesn't always update on its own. If a step looks stuck, refresh the page.
 
 ---
 
@@ -101,4 +108,5 @@ The target infrastructure has been pre-created and was used in the previous stag
 | :--- | :--- |
 | **Progressive Delivery** | Canary deployments reduce risk by gradually rolling out changes. |
 | **Manual Gates** | Approval steps ensure human oversight for critical deployments. |
+| **AI Verification** | AI Verify checks canary metrics before anyone is asked to approve. |
 | **Environment Propagation** | Reusing environments across stages reduces configuration duplication. |

@@ -26,7 +26,7 @@ One journey in three parts. Within each part, every lab builds on the pipeline s
 | | [Lab 1: Build](labs/01-build.md) | Create a CI pipeline that tests, builds and pushes a deployable artifact |
 | | [Lab 2: DevSecOps](labs/02-devsecops.md) | Add enforced Fortify and OWASP security scanning to the build |
 | | [Lab 3: Continuous Deploy - Frontend](labs/03-continuous-deploy-frontend.md) | Deploy the frontend to Kubernetes with a rolling strategy |
-| | [Lab 4: Continuous Deploy - Backend](labs/04-continuous-deploy-backend.md) | Deploy the backend as a canary, then replace manual approval with continuous verification |
+| | [Lab 4: Continuous Deploy - Backend](labs/04-continuous-deploy-backend.md) | Deploy the backend as a canary, then add AI Verify ahead of the manual approval |
 | | [Lab 5: Validate the Release](labs/05-validate-release.md) | Watch canary traffic and let Harness validate the release automatically |
 | **Part 2** | **Ship the database change** | |
 | | [Lab 6: Deploy a Change](labs/06-database-deploy-a-change.md) | Apply schema changes from Git with Database DevOps, triggered like any other code change |
@@ -49,7 +49,7 @@ Your Harness project already contains everything the labs reference:
 
 - The **workshop code repository** (`harness-devsecops`) with the sample application - this repo mirrors that application under `frontend-app/`, `backend/`, `harness-deploy/` and `automation/`
 - The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** and **k8s-prod** clusters for containerized steps, and the **dockerhub** connector
-- Pipeline templates: **Compile Application**, **DevX Fortify Scan**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
+- Pipeline templates: **Compile Application**, **Devx Fortify Scan - DAST**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
 - The **Approval Required**, **Production Guardrail** and **Change Verified** policies and policy sets
 - The **Failure Analyst** Worker Agent, using the Harness-managed `account.harnessAnthropic` model connector, and the project-level `servicenow` ServiceNow connector
 - For the Database DevOps labs: the **DB** schema, database instances **DB1** (dev), **DB2** (QA) and **DB3** (production), and a `db_changes` Git repository - this repo's [`db/changelog.yaml`](db/changelog.yaml) is the starting changelog
