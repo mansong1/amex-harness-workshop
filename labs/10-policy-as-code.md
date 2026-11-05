@@ -14,7 +14,7 @@ In this lab, the user creates and applies policies as code to enable governance 
 
 ### Step 1: Create a Policy to Require Approvals
 1. From the secondary menu, select **Project Settings**
-2. Under Security & Governance Select **Policies**
+2. Under Security & Governance, select **Policies**
 3. Click **New Policy**
 4. Enter the policy name below and click **Apply**
 5. From the suggested list, select **Pipeline - Approval** and click **Use This Sample**. It denies any **Deployment** stage that does not contain a **Harness Approval** step
