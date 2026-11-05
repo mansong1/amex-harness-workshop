@@ -1,8 +1,6 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="images/harness-logo-white.svg">
-    <img src="images/harness-logo.svg" alt="Harness" width="220">
-  </picture>
+  <img src="images/harness-logo.svg#gh-light-mode-only" alt="Harness" width="220">
+  <img src="images/harness-logo-white.svg#gh-dark-mode-only" alt="Harness" width="220">
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="images/amex-logo.svg" alt="American Express" width="120">
 </p>
