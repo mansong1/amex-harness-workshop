@@ -20,7 +20,7 @@ In this lab, the security team has implemented orchestration of **Fortify** and 
 
 ![](../images/lab02-use-template.png)
 
-3. Select **DevX Fortify Scan**
+3. Select **Devx Fortify Scan - DAST**
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
@@ -48,9 +48,12 @@ In this lab, the security team has implemented orchestration of **Fortify** and 
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>||
+| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
 
-2. After the **Build and Push** stage is complete, navigate to the **Security Tests** tab to see the deduplicated, normalized, and prioritized list of vulnerabilities discovered across your scanners
+2. After the **Build and Push** stage is complete, navigate to the **Vulnerabilities** tab (formerly **Security Tests**) to see the deduplicated, normalized, and prioritized list of vulnerabilities discovered across your scanners. The tab is available while the run is in progress, and it can show 0 for a few seconds before the results load
+
+> [!TIP]
+> The execution page doesn't always update on its own. If a step looks stuck, refresh the page.
 
 ---
 

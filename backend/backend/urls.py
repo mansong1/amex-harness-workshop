@@ -16,10 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import path, include, re_path
-
+from deploy.views import HealthCheck, OrdersApi
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('deploy/', include('deploy.urls')),
+    path('health', HealthCheck.as_view(), name='health'),
+    path('health/', HealthCheck.as_view(), name='health-slash'),
+    path('api/orders', OrdersApi.as_view(), name='api-orders'),
+    path('api/orders/', OrdersApi.as_view(), name='api-orders-slash'),
 ]

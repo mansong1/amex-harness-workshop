@@ -17,8 +17,13 @@ sename: <+variable.username>
 servicePort: 80
 serviceTargetPort: 8000
 
+# Shown in the workshop app. All values come from the running pipeline; quoted so
+# the ConfigMap gets strings. Canary pods get their own versioned ConfigMap, so
+# each pod reports the build it was deployed with.
 env:
   config:
-    HARNESS_BUILD: <+pipeline.sequenceId>
-    SERVICE_NAME: <+service.name>
-    APPLICATION_VERSION: <+artifacts.primary.tag>
+    HARNESS_BUILD: "<+pipeline.sequenceId>"
+    LAST_EXECUTION_ID: "<+pipeline.sequenceId>"
+    EXECUTION_URL: "<+pipeline.executionUrl>"
+    SERVICE_NAME: "<+service.name>"
+    APPLICATION_VERSION: "<+artifacts.primary.tag>"

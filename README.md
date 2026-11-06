@@ -26,7 +26,7 @@ One journey in three parts on a **single `workshop` pipeline**. Within each part
 | | [Lab 1: Build](labs/01-build.md) | Create a CI pipeline that tests, builds and pushes a deployable artifact |
 | | [Lab 2: DevSecOps](labs/02-devsecops.md) | Add enforced Fortify and OWASP security scanning to the build |
 | | [Lab 3: Continuous Deploy - Frontend](labs/03-continuous-deploy-frontend.md) | Deploy the frontend to Kubernetes with a rolling strategy |
-| | [Lab 4: Continuous Deploy - Backend](labs/04-continuous-deploy-backend.md) | Deploy the backend as a canary, then replace manual approval with continuous verification |
+| | [Lab 4: Continuous Deploy - Backend](labs/04-continuous-deploy-backend.md) | Deploy the backend as a canary, then add AI Verify ahead of the manual approval |
 | | [Lab 5: Validate the Release](labs/05-validate-release.md) | Watch canary traffic and let Harness validate the release automatically |
 | **Part 2** | **Ship the database change with the app** | |
 | | [Lab 6: Ship the Database Change With the App](labs/06-database-deploy-a-change.md) | Add DB3 Schema Apply and a `/health` smoke test to the backend stage; trigger on `changelog.yaml` |
@@ -48,14 +48,14 @@ One journey in three parts on a **single `workshop` pipeline**. Within each part
 Your Harness project already contains everything the labs reference:
 
 - The **workshop code repository** (`harness-devsecops`) with the sample application - this repo mirrors that application under `frontend-app/`, `backend/`, `harness-deploy/` and `automation/`
-- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** cluster for Database DevOps steps, and a project **Harness Artifact Registry** Docker registry named **`<project_id>-workshop`** (e.g. `cut1hws274-workshop`) (see [`reference/ORGANISER-SETUP.md`](reference/ORGANISER-SETUP.md))
-- Pipeline templates: **Compile Application**, **DevX Fortify Scan**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
+- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** and **k8s-prod** clusters for containerized steps, and a project **Harness Artifact Registry** Docker registry named **`<project_id>-workshop`** (e.g. `cut1hws274-workshop`) (see [`reference/ORGANISER-SETUP.md`](reference/ORGANISER-SETUP.md))
+- Pipeline templates: **Compile Application**, **Devx Fortify Scan - DAST**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
 - The **Approval Required**, **Production Guardrail** and **Change Verified** policies and policy sets
 - The **Failure Analyst** Worker Agent, using the Harness-managed `account.harnessAnthropic` model connector, and the project-level `servicenow` ServiceNow connector
 - For the Database DevOps labs: the **DB** schema, instances **DB1** / **DB2** / **DB3** (labs apply only to **DB3**), and a `db_changes` Git repository - this repo's [`db/changelog.yaml`](db/changelog.yaml) is the starting changelog
 - The **lab_endpoint** project variable with your application's URL
 
-Some values shown in the labs are environment-specific (the code repository name, the Docker connector and repository, the ServiceNow sandbox). Before Lab 1, run the [preflight checks](labs/00-workshop-primer.md#environment-values-and-preflight-checks) in the primer - they list every value, what it must point to, and how to verify it.
+Some values shown in the labs are environment-specific (the code repository name, the HAR registry, the ServiceNow sandbox). Before Lab 1, run the [preflight checks](labs/00-workshop-primer.md#environment-values-and-preflight-checks) in the primer - they list every value, what it must point to, and how to verify it.
 
 ## Repository layout
 

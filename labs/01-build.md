@@ -102,6 +102,8 @@ Navigate to the **Execution** tab and add the following steps:
 | ---------- | ----------------------  | ----- |
 | Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
 
+The run form may also show an optional **Compile** input (`ssl_input`). Leave it empty.
+
 > [!WARNING]
 > Pipeline execution is rejected by the policy engine. Let's create a compliant pipeline.
 > Proceed to Lab 2: DevSecOps.

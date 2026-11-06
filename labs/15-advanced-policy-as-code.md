@@ -11,6 +11,9 @@ In this lab, the user creates an advanced policy that blocks deployments when cr
 
 ## Walkthrough
 
+> [!NOTE]
+> This lab builds on the pipeline from Labs 10 to 13. To reach the new policy step, a run still passes the earlier gates: the **ServiceNow Approval** stage (move the change to **Implement** in ServiceNow), the frontend **Approval** step and the **Change Verified** step. Have ServiceNow open before you run.
+
 ### Step 1: Create a Policy to Block Critical CVEs
 1. From the secondary menu, select **Project Settings**
 2. Select **Policies**
@@ -75,11 +78,21 @@ deny[sprintf("Node OSS Can't contain any critical vulnerability '%d'", [input.NO
 ---
 
 ### Step 4: Test the Policy
-1. Save the pipeline and execute
+1. Save the pipeline and execute. Move the change to **Implement** in ServiceNow and approve the frontend **Approval** step when prompted
 2. Note that the pipeline fails at the policy evaluation step due to critical vulnerabilities being found by OWASP
 
 > [!TIP]
 > The change request raised for this run stays in **Implement**. Cancel it in ServiceNow, or add the **ServiceNow Close Failed** template to the frontend rollback steps as you did for the backend in Lab 13.
+
+---
+
+### Step 5: Clean Up
+The **Policy - No Critical CVEs** step fails every run while OWASP reports critical vulnerabilities, so remove it once you've seen it work:
+
+1. Open the pipeline, select the **frontend** stage and delete the **Policy - No Critical CVEs** step
+2. Click **Save**
+3. In ServiceNow, cancel any change request from this lab that's still open
+4. Optionally, toggle **Enforced** off on the **Criticals Not Allowed** policy set
 
 ---
 

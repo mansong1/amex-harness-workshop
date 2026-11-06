@@ -207,19 +207,6 @@ pipeline:
                               count: 1
                           skipDryRun: false
                     - step:
-                        type: HarnessApproval
-                        name: Approval
-                        identifier: Approval
-                        timeout: 1d
-                        spec:
-                          approvalMessage: Approve canary before continuing
-                          includePipelineExecutionHistory: true
-                          approvers:
-                            userGroups:
-                              - All_Project_Users
-                            minimumCount: 1
-                            disallowPipelineExecutor: false
-                    - step:
                         type: Verify
                         name: AI Verify
                         identifier: AI_Verify
@@ -235,6 +222,19 @@ pipeline:
                           duration: 5m
                           sensitivity: HIGH
                           trafficControlEnabled: false
+                    - step:
+                        type: HarnessApproval
+                        name: Approval
+                        identifier: Approval
+                        timeout: 1d
+                        spec:
+                          approvalMessage: Approve canary before continuing
+                          includePipelineExecutionHistory: true
+                          approvers:
+                            userGroups:
+                              - All_Project_Users
+                            minimumCount: 1
+                            disallowPipelineExecutor: false
                     - step:
                         name: Canary Delete
                         identifier: canaryDelete

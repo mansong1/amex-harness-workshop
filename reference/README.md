@@ -25,7 +25,7 @@ flowchart LR
   end
   subgraph be [backend]
     DB[DB step group: Schema Apply DB3]
-    Canary[Canary + Approval + Verify]
+    Canary[Canary + Verify + Approval]
     Rolling[Rolling Deployment]
     Smoke["HTTP Smoke Test /health"]
   end
