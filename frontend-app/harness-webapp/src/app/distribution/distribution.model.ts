@@ -96,7 +96,7 @@ export function bucketise(samples: Sample[], bucketMs = 5_000, maxBuckets = 12, 
 /** Show a version as a build label: '43' -> 'build-43', 'build-43' / 'v1.2' unchanged. */
 export function buildLabel(version?: string | null): string {
   const v = (version ?? '').toString().trim();
-  if (!v) return 'unknown build';
+  if (!v) return 'build unknown';
   return /^\d+$/.test(v) ? `build-${v}` : v;
 }
 

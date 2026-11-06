@@ -6,93 +6,116 @@
     </svg>
     <span><strong>Smoke test failed:</strong> Orders service unavailable. Harness is rolling back to the stable build.</span>
   } @else if (ordersChecked) {
+    <img class="smoke-slot__mascot" src="assets/captain-canary.png" alt="" />
     <span>Smoke test passing · Orders service OK</span>
   } @else {
     <span>Checking smoke test…</span>
   }
 </div>
 
+<div class="release-bar" [class.release-bar--canary]="isCanary" [class.release-bar--stable]="!isCanary">
+  <div class="release-bar__inner">
+    <span class="release-bar__label">{{ isCanary ? 'CANARY' : 'STABLE' }} · {{ buildName }}</span>
+    <span class="state-chip state-chip--{{ healthLevel }}">{{ releaseState }}</span>
+    @if (executionUrl) {
+      <a class="release-bar__exec" [href]="executionUrl" target="_blank" rel="noopener">{{ executionLabel }} ↗</a>
+    } @else {
+      <span class="release-bar__exec">{{ executionLabel }}</span>
+    }
+    <span class="release-bar__actions">
+      <button type="button" class="btn btn-bar" (click)="checkRelase()">Check Release</button>
+      <button type="button" class="btn btn-bar" (click)="distribution()">Start Distribution Test</button>
+    </span>
+  </div>
+</div>
+
 <div class="dashboard">
   <header class="dashboard__header">
-    <div>
-      <p class="eyebrow">Release status</p>
-      <h1>Member Dashboard</h1>
-      <p class="subtitle">Release status and traffic checks for the workshop canary.</p>
-    </div>
+    <h1>{{ greeting }}, {{ firstName }}</h1>
+    <p class="subtitle">Your card at a glance. <span class="sample">Sample data, fictional bank.</span></p>
   </header>
 
-  <div class="status-strip" [class.status-strip--canary]="isCanary" [class.status-strip--stable]="!isCanary">
-    <span class="status-strip__label">{{ isCanary ? 'CANARY' : 'STABLE' }} · {{ buildName }} ·</span>
-    <span class="state-chip state-chip--{{ healthLevel }}">{{ releaseState }}</span>
-  </div>
-
   <div class="dashboard__grid">
-    <section class="card card--plastic" [class.card--canary]="isCanary">
-      <div class="card__chip"></div>
-      <div class="card__brand">MEMBER</div>
-      <div class="card__number">•••• •••• •••• {{ member?.card_last4 || '1005' }}</div>
-      <div class="card__footer">
-        <div>
-          <div class="card__label">Card Member</div>
-          <div class="card__value">{{ memberName }}</div>
+    <div class="col">
+      <section class="card card--plastic" [class.card--canary]="isCanary">
+        <div class="card__top">
+          <div class="card__chip"></div>
+          <div class="card__brand">MEMBER</div>
         </div>
-        <div>
-          <div class="card__label">Service</div>
-          <div class="card__value">{{ serviceName || 'workshop-backend' }}</div>
-        </div>
-      </div>
-    </section>
+        <div class="card__number">•••• •••• •••• {{ member?.card_last4 || '1005' }}</div>
+        <div class="card__name">{{ memberName }}</div>
+      </section>
+
+      <section class="panel">
+        <dl class="money">
+          <div>
+            <dt>Current balance</dt>
+            <dd class="money__big">{{ account.balance | currency:'USD' }}</dd>
+          </div>
+          <div>
+            <dt>Available credit</dt>
+            <dd class="money__big">{{ availableCredit | currency:'USD' }}</dd>
+          </div>
+        </dl>
+        <p class="due">Minimum {{ account.minimumDue | currency:'USD':'symbol':'1.0-0' }} due {{ account.dueDate | date:'MMM d' }} · Limit {{ account.creditLimit | currency:'USD':'symbol':'1.0-0' }}</p>
+        <button type="button" class="btn btn-primary" (click)="pay()">Pay</button>
+        @if (payNote) {
+          <p class="hint">This is a demo app: no payment is made.</p>
+        }
+      </section>
+    </div>
 
     <section class="panel">
-      <h2>Release</h2>
-      <dl class="facts">
-        <div>
-          <dt>Deployment</dt>
-          <dd>{{ isCanary ? 'Canary' : 'Stable' }}</dd>
-        </div>
-        <div>
-          <dt>Build</dt>
-          <dd>{{ buildName }}</dd>
-        </div>
-        <div>
-          <dt>Last execution</dt>
-          <dd>{{ executionLabel }}</dd>
-        </div>
-        <div>
-          <dt>Health</dt>
-          <dd class="health health--{{ healthLevel }}">{{ healthLabel }}</dd>
-        </div>
-      </dl>
-      <div class="actions">
-        <button type="button" class="btn btn-primary" (click)="checkRelase()">Check Release</button>
-        <button type="button" class="btn btn-outline" (click)="distribution()">Start Distribution Test</button>
-      </div>
+      <h2>Recent transactions</h2>
+      <ul class="list">
+        @for (t of account.transactions; track t.date + t.merchant) {
+          <li>
+            <span>
+              <span class="list__title">{{ t.merchant }}</span>
+              <span class="list__meta">{{ t.date | date:'MMM d' }} · {{ t.category }}</span>
+            </span>
+            <span class="list__amount">{{ t.amount | currency:'USD' }}</span>
+          </li>
+        }
+      </ul>
     </section>
 
-    <section class="panel panel--member">
-      <h2>Member profile</h2>
-      <dl class="facts facts--stacked">
-        <div>
-          <dt>Name</dt>
-          <dd>{{ memberName }}</dd>
-        </div>
-        <div>
-          <dt>Email</dt>
-          <dd class="wrap">{{ member?.email || '—' }}</dd>
-        </div>
+    <div class="col">
+      <section class="panel">
+        <h2>Rewards</h2>
         @if (hasRewardsTier) {
-          <div class="rewards-row">
-            <dt>Rewards tier</dt>
-            <dd>
-              <span class="tier-chip">{{ member.rewards_tier }}</span>
-              @if (isCanary) { <span class="new-tag">New in {{ buildName }}</span> }
-            </dd>
-          </div>
+          <p class="rewards">
+            <span class="tier-chip">{{ member.rewards_tier }}</span>
+            @if (isCanary) { <span class="new-tag">New in {{ buildName }}</span> }
+          </p>
+        } @else {
+          <p class="hint">Your rewards tier appears after the DB3 schema change adds <code>rewards_tier</code>.</p>
         }
-      </dl>
-      @if (!hasRewardsTier) {
-        <p class="hint">Rewards tier appears after the DB3 schema change adds <code>rewards_tier</code>.</p>
-      }
-    </section>
+        <p class="points">{{ account.points | number }} <span>points</span></p>
+      </section>
+
+      <section class="panel" [class.panel--error]="ordersDegraded">
+        <h2>Recent orders</h2>
+        @if (ordersDegraded) {
+          <p class="orders-error" role="alert">We can't load your orders right now ({{ ordersError }}).</p>
+        } @else if (!ordersChecked) {
+          <p class="hint">Loading orders…</p>
+        } @else if (!orders.length) {
+          <p class="hint">No recent orders.</p>
+        } @else {
+          <ul class="list">
+            @for (o of orders; track o.id) {
+              <li>
+                <span>
+                  <span class="list__title">{{ o.item }}</span>
+                  <span class="list__meta">{{ o.merchant }} · {{ o.status }}</span>
+                </span>
+                <span class="list__amount">{{ o.amount | currency:'USD' }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
   </div>
 </div>

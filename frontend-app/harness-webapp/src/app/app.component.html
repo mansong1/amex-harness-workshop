@@ -1,4 +1,12 @@
 <div id="app" class="amex-app">
-    <app-side-bar></app-side-bar>
+  <app-side-bar></app-side-bar>
+  <main class="app-main">
     <router-outlet></router-outlet>
-  </div>
+  </main>
+  <footer class="app-footer">
+    <div class="app-footer__inner">
+      <img class="app-footer__mascot" src="assets/captain-canary.png" alt="Captain Canary, the Harness mascot" />
+      <span>Powered by <a href="https://www.harness.io" target="_blank" rel="noopener">Harness</a> · Workshop demo app</span>
+    </div>
+  </footer>
+</div>

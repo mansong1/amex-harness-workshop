@@ -111,6 +111,7 @@ describe('distribution model', () => {
   it('labels builds and judges the split', () => {
     expect(buildLabel('43')).toBe('build-43');
     expect(buildLabel('build-43')).toBe('build-43');
+    expect(buildLabel('')).toBe('build unknown');
     expect(splitVerdict(9.6, 10, 100)).toBe('on-target');
     expect(splitVerdict(30, 10, 100)).toBe('off-target');
     expect(splitVerdict(30, 10, 5)).toBe('waiting');

@@ -1,7 +1,6 @@
 :host {
   display: block;
-  font-family: 'Montserrat', sans-serif;
-  color: #00175a;
+  color: var(--hx-text);
 }
 
 .dist-page {
@@ -22,7 +21,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 1rem;
-  color: #006fcf;
+  color: var(--hx-blue);
   margin: 0 0 0.35rem;
   font-weight: 700;
 }
@@ -30,12 +29,11 @@
 .dist-header h1 {
   margin: 0;
   font-size: 2.5rem;
-  font-weight: 700;
 }
 
 .subtitle {
   margin: 0.4rem 0 0;
-  color: #374151;
+  color: var(--hx-text-2);
   font-size: 1rem;
 }
 
@@ -45,22 +43,22 @@
 }
 
 .btn {
-  border-radius: 999px;
+  border-radius: 24px;
   padding: 0.7rem 1.5rem;
   font-weight: 700;
   font-size: 1rem;
-  border: 2px solid #006fcf;
+  border: 1px solid var(--hx-blue);
   cursor: pointer;
 }
 
 .btn-primary {
-  background: #006fcf;
+  background: var(--hx-blue);
   color: #fff;
 }
 
 .btn-outline {
   background: #fff;
-  color: #006fcf;
+  color: var(--hx-blue);
 }
 
 .btn:disabled {
@@ -76,16 +74,16 @@
 }
 
 .total {
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
-.total--stable { background: #006fcf; color: #fff; }
-.total--canary { background: #FFC72C; color: #00175a; }
-.total--errors { background: #fff; color: #374151; border: 1px solid #d9e2f1; }
+.total--stable { background: var(--hx-blue); color: #fff; }
+.total--canary { background: var(--hx-canary); color: var(--hx-navy); }
+.total--errors { background: #fff; color: var(--hx-text-2); border: 1px solid var(--hx-border); }
 .total--errors-active { background: #c8102e; color: #fff; border-color: #c8102e; }
 
 .total__label {
@@ -110,12 +108,12 @@
   align-items: center;
   gap: 0.75rem 1.5rem;
   background: #fff;
-  border: 1px solid #d9e2f1;
-  border-radius: 16px;
+  border: 1px solid var(--hx-border);
+  border-radius: 12px;
   padding: 0.9rem 1.25rem;
   margin-bottom: 1rem;
   font-size: 1rem;
-  color: #374151;
+  color: var(--hx-text-2);
 }
 
 .split__target input {
@@ -123,22 +121,22 @@
   margin-left: 0.4rem;
   font: inherit;
   font-weight: 700;
-  color: #00175a;
-  border: 1.5px solid #9ca3af;
+  color: var(--hx-navy);
+  border: 1px solid var(--hx-border-strong);
   border-radius: 8px;
   padding: 0.15rem 0.4rem;
 }
 
 .split__hint {
   margin-left: 0.4rem;
-  color: #4b5563;
+  color: var(--hx-text-2);
   font-style: italic;
 }
 
 .split__observed {
   font-size: 1.375rem;
   font-weight: 800;
-  color: #00175a;
+  color: var(--hx-navy);
 }
 
 .split__verdict {
@@ -155,24 +153,24 @@
   height: 18px;
   border-radius: 999px;
   overflow: visible;
-  background: #e5e7eb;
+  background: var(--hx-subtle);
 }
 
-.split__stable { background: #006fcf; border-radius: 999px 0 0 999px; }
-.split__canary { background: #FFC72C; border-radius: 0 999px 999px 0; }
+.split__stable { background: var(--hx-blue); border-radius: 999px 0 0 999px; }
+.split__canary { background: var(--hx-canary); border-radius: 0 999px 999px 0; }
 
 .split__marker {
   position: absolute;
   top: -5px;
   bottom: -5px;
   width: 3px;
-  background: #00175a;
+  background: var(--hx-navy);
 }
 
 .chart-card {
   background: #fff;
-  border: 1px solid #d9e2f1;
-  border-radius: 16px;
+  border: 1px solid var(--hx-border);
+  border-radius: 12px;
   padding: 1rem 1.25rem;
 }
 
@@ -181,7 +179,7 @@
   gap: 1.5rem;
   font-size: 1rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--hx-text);
   margin-bottom: 0.5rem;
 }
 
@@ -205,13 +203,12 @@
 
 /* ngx-charts renders SVG outside this component's encapsulation. */
 :host ::ng-deep .chart-wrap text {
-  fill: #1f2937 !important;
+  fill: var(--hx-text) !important;
   font-size: 16px !important;
-  font-family: 'Montserrat', sans-serif;
 }
 
 :host ::ng-deep .chart-wrap .gridline-path {
-  stroke: #e5e7eb !important;
+  stroke: var(--hx-border) !important;
 }
 
 .empty {
@@ -221,10 +218,16 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: #f9fafb;
-  border: 2px dashed #d1d5db;
+  background: var(--hx-surface);
+  border: 1px dashed var(--hx-border-strong);
   border-radius: 12px;
   padding: 2rem;
+}
+
+.empty__mascot {
+  height: 140px;
+  width: auto;
+  margin-bottom: 1rem;
 }
 
 .empty__title {
@@ -236,7 +239,7 @@
 .empty__steps {
   text-align: left;
   font-size: 1.05rem;
-  color: #374151;
+  color: var(--hx-text-2);
   margin: 0;
 }
 
@@ -267,7 +270,7 @@
 .recent__hint {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #4b5563;
+  color: var(--hx-text-2);
   margin-left: 0.5rem;
 }
 
@@ -282,13 +285,13 @@
   border-radius: 3px;
 }
 
-.cell--stable { background: #006fcf; }
-.cell--canary { background: #FFC72C; }
+.cell--stable { background: var(--hx-blue); }
+.cell--canary { background: var(--hx-canary); }
 .cell--error { background: #c8102e; }
 
 .collecting {
   font-size: 1rem;
-  color: #4b5563;
+  color: var(--hx-text-2);
   margin: 0.25rem 0 0;
 }
 

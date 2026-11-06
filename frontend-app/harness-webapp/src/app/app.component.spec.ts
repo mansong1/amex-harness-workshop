@@ -28,4 +28,12 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.app-nav__title')?.textContent).toContain('Member Dashboard');
   });
+
+  it('shows the Captain Canary "Powered by Harness" footer', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.app-footer')?.textContent).toContain('Powered by');
+    expect(compiled.querySelector('.app-footer img')?.getAttribute('src')).toBe('assets/captain-canary.png');
+  });
 });

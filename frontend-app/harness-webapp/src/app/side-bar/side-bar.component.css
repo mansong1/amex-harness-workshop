@@ -1,7 +1,8 @@
+/* White header with a hairline, like developer.harness.io. */
 .app-nav {
-  background: #00175a;
-  color: #fff;
-  font-family: 'Montserrat', sans-serif;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--hx-text);
+  box-shadow: 0 1px 0 rgba(27, 29, 32, 0.08);
 }
 
 .app-nav__inner {
@@ -10,7 +11,7 @@
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.7rem 1.25rem;
+  padding: 0.75rem 1.25rem;
 }
 
 .app-nav__brand {
@@ -18,7 +19,7 @@
   align-items: center;
   gap: 0.75rem;
   text-decoration: none;
-  color: #fff;
+  color: var(--hx-text);
 }
 
 /* Neutral monogram, deliberately not a real card-network logo. */
@@ -26,42 +27,47 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: #006fcf;
+  background: var(--hx-blue);
   color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 1rem;
   letter-spacing: 0.04em;
 }
 
 .app-nav__title {
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-family: var(--hx-heading-font);
+  font-weight: 600;
+  font-size: 1.15rem;
 }
 
 .app-nav__sub {
-  font-weight: 500;
-  opacity: 0.8;
+  font-family: var(--hx-font);
+  font-weight: 400;
+  color: var(--hx-text-2);
 }
 
 .app-nav__links {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 .app-nav__link {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--hx-text-2);
   text-decoration: none;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.35rem 0;
   border-bottom: 3px solid transparent;
 }
 
-.app-nav__link.active,
 .app-nav__link:hover {
-  color: #fff;
-  border-bottom-color: #4aa3ff;
+  color: var(--hx-text);
+}
+
+.app-nav__link.active {
+  color: var(--hx-blue);
+  border-bottom-color: var(--hx-blue);
 }

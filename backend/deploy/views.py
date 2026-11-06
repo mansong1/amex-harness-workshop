@@ -13,6 +13,14 @@ from datetime import datetime
 import random
 
 
+def _env(name):
+    """Env value, or '' when unset or when Harness left the expression unresolved."""
+    value = (os.getenv(name) or '').strip()
+    if not value or value.startswith('<+') or value.lower() in ('null', 'none'):
+        return ''
+    return value
+
+
 def _deployment_type_from_hostname():
     host = os.getenv('HOSTNAME') or getattr(settings, 'DEPLOYMENT_VARIABLE', None) or ''
     if host and 'canary' in host:
@@ -21,39 +29,24 @@ def _deployment_type_from_hostname():
 
 
 def _application_version():
-    return os.getenv('APPLICATION_VERSION') or getattr(settings, 'APPLICATION_VERSION', None) or ''
+    return _env('APPLICATION_VERSION')
 
 
 class ExecutionDetails(APIView):
+    """Release facts for the dashboard. Every value comes from the pod's env, which
+    harness-deploy/backend/values.yaml fills from the pipeline run. Unset values are
+    returned as empty strings so the UI can say 'unknown' instead of inventing one."""
     permission_classes = [AllowAny]
     def get(self, request):
-        service_name=""
-        last_execution_id=""
-        application_version=""
-        deployment_type="normal"
-
-        if os.getenv('APPLICATION_VERSION'):
-            application_version= os.getenv('APPLICATION_VERSION')
-
-
-        if os.getenv('SERVICE_NAME'):
-            service_name= os.getenv('SERVICE_NAME')
-
-        if os.getenv('LAST_EXECUTION_ID'):
-            last_execution_id= os.getenv('LAST_EXECUTION_ID')
-
-        if os.getenv('HOSTNAME'):
-            if 'canary' in os.getenv('HOSTNAME'):
-                deployment_type = 'canary'
-
-
-        payload={
-        "service_name": service_name,
-        "last_execution_id": last_execution_id,
-        "application_version": application_version,
-        "deployment_type": deployment_type
+        payload = {
+            "service_name": _env('SERVICE_NAME'),
+            "last_execution_id": _env('LAST_EXECUTION_ID') or _env('HARNESS_BUILD'),
+            "execution_url": _env('EXECUTION_URL'),
+            "application_version": _application_version(),
+            "deployment_type": _deployment_type_from_hostname(),
+            "pod": _env('HOSTNAME'),
         }
-        return JsonResponse(payload,safe=False)
+        return JsonResponse(payload, safe=False)
 
 class RequestEntryCreate(generics.CreateAPIView):
     permission_classes = [AllowAny]
@@ -79,7 +72,7 @@ class RequestEntryCreate(generics.CreateAPIView):
         response = super().create(request, *args, **kwargs)
         response.data['deployment_type'] = response.data.get('name', 'normal')
         response.data['application_version'] = _application_version()
-        response.data['pod'] = os.getenv('HOSTNAME', '')
+        response.data['pod'] = _env('HOSTNAME')
         return response
 
 
@@ -167,7 +160,15 @@ class OrdersApi(APIView):
         return JsonResponse(
             {
                 "status": "ok",
-                "orders": [],
+                # Clearly fictional sample orders for the demo app.
+                "orders": [
+                    {"id": "ORD-1042", "merchant": "Northwind Outfitters", "item": "Trail running shoes",
+                     "amount": 129.00, "status": "Shipped", "date": "2026-11-03"},
+                    {"id": "ORD-1039", "merchant": "Bookshop on Main", "item": "2 paperbacks",
+                     "amount": 31.48, "status": "Delivered", "date": "2026-10-30"},
+                    {"id": "ORD-1031", "merchant": "Contoso Electronics", "item": "USB-C dock",
+                     "amount": 89.99, "status": "Delivered", "date": "2026-10-24"},
+                ],
                 "deployment_type": _deployment_type_from_hostname(),
             },
             safe=False,

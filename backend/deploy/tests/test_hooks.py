@@ -87,3 +87,35 @@ class DistributionCreateTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()['name'], 'normal')
         self.assertEqual(response.json()['deployment_type'], 'normal')
+
+
+class ExecutionDetailsTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_values_come_from_pipeline_env(self):
+        from unittest import mock
+        env = {
+            'APPLICATION_VERSION': 'cut1hws274-43',
+            'LAST_EXECUTION_ID': '43',
+            'EXECUTION_URL': 'https://app.harness.io/ng/account/x/executions/abc',
+            'SERVICE_NAME': 'backend',
+            'HOSTNAME': 'backend-deployment-canary-5d8b',
+        }
+        with mock.patch.dict(os.environ, env):
+            body = self.client.get('/deploy/execution').json()
+        self.assertEqual(body['application_version'], 'cut1hws274-43')
+        self.assertEqual(body['last_execution_id'], '43')
+        self.assertEqual(body['execution_url'], env['EXECUTION_URL'])
+        self.assertEqual(body['deployment_type'], 'canary')
+        self.assertEqual(body['pod'], env['HOSTNAME'])
+
+    def test_unset_or_unresolved_values_are_empty_not_faked(self):
+        from unittest import mock
+        env = {'APPLICATION_VERSION': '<+artifacts.primary.tag>', 'EXECUTION_URL': 'null',
+               'LAST_EXECUTION_ID': '', 'HARNESS_BUILD': ''}
+        with mock.patch.dict(os.environ, env):
+            body = self.client.get('/deploy/execution').json()
+        self.assertEqual(body['application_version'], '')
+        self.assertEqual(body['execution_url'], '')
+        self.assertEqual(body['last_execution_id'], '')
