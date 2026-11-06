@@ -22,6 +22,7 @@ Nothing in the UI code has a fallback build or execution number. When a value is
 | Execution link | `execution_url` | `EXECUTION_URL` | `<+pipeline.executionUrl>` |
 | STABLE / CANARY | `deployment_type` | `HOSTNAME` (pod name) | Kubernetes; Harness canary pods are named `...-canary-...` |
 | Distribution per-response tier/build/pod | `POST /deploy/create` `deployment_type`, `application_version`, `pod` | same as above | same as above |
+| Rewards tier + "New with DB update" | `/deploy/member` `rewards_tier` | none (DB3 column; `DEMO_REWARDS_TIER` locally) | Lab 6 Liquibase change, not the image, so it shows on stable and canary alike |
 | Health chip | `/health`, `/api/orders` | `SMOKE_FAIL` | not set by the pipeline (Lab 13 sets it) |
 
 The backend treats empty, `null` or unresolved `<+...>` values as unset.

@@ -86,7 +86,7 @@
         @if (hasRewardsTier) {
           <p class="rewards">
             <span class="tier-chip">{{ member.rewards_tier }}</span>
-            @if (isCanary) { <span class="new-tag">New in {{ buildName }}</span> }
+            <span class="new-tag" title="Added by the DB3 schema change (rewards_tier column), not by the app image">New with DB update</span>
           </p>
         } @else {
           <p class="hint">Your rewards tier appears after the DB3 schema change adds <code>rewards_tier</code>.</p>

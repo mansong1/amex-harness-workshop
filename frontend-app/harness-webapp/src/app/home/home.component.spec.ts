@@ -48,6 +48,9 @@ describe('HomeComponent', () => {
     expect(el.textContent).toContain('Current balance');
     expect(el.textContent).toContain('Recent transactions');
     expect(el.querySelector('.tier-chip')?.textContent).toContain('Platinum');
+    // The tag credits the DB3 schema change, not the build, so stable shows it too.
+    expect(el.querySelector('.new-tag')?.textContent).toContain('New with DB update');
+    expect(el.querySelector('.new-tag')?.textContent).not.toContain('cut1hws274');
     expect(el.textContent).toContain('Trail running shoes');
     expect(Array.from(el.querySelectorAll('button')).map((b) => b.textContent?.trim()))
       .toEqual(jasmine.arrayContaining(['Pay', 'Check Release', 'Start Distribution Test']));
@@ -59,7 +62,7 @@ describe('HomeComponent', () => {
     expect(el.querySelector('.release-bar__label')?.textContent).toContain('CANARY · cut1hws274-43');
     expect(el.querySelector('.state-chip--bad')?.textContent).toContain('Rolling back');
     expect(el.querySelector('.orders-error')?.textContent).toContain('HTTP 500');
-    expect(el.querySelector('.new-tag')?.textContent).toContain('New in cut1hws274-43');
+    expect(el.querySelector('.new-tag')?.textContent).toContain('New with DB update');
   });
 
   it('says unknown instead of inventing a build or execution', () => {
