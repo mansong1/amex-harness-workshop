@@ -83,7 +83,7 @@ Navigate to the **Execution** tab and add the following steps:
 | Registry Type | Third-Party Artifact Registry | The default is Artifact Registry; select Third-Party to choose a Docker connector |
 | Docker Connector | dockerhub ||
 | Docker Repository | <pre>`nikpap/harness-workshop`</pre>||
-| Tags | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| Click on the pin and select expression and paste the value |
+| Tags | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| Click **+ Add** to add a tag row, then click the pin on that row, select **Expression** and paste the value |
 | **Optional Configuration** |||
 | Dockerfile | <pre>`/harness/frontend-app/harness-webapp/Dockerfile`</pre>| This tells Harness where the Dockerfile is for building the app |
 | Context | <pre>`/harness/frontend-app/harness-webapp`</pre>| This tells from where to run the instructions included in the Dockerfile |
@@ -98,7 +98,9 @@ Navigate to the **Execution** tab and add the following steps:
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Pre-populated |
+| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+
+The run form may also show an optional **Compile** input (`ssl_input`). Leave it empty.
 
 > [!WARNING]
 > Pipeline execution is rejected by the policy engine. Let's create a compliant pipeline.

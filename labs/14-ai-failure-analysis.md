@@ -12,6 +12,9 @@ In Lab 13 Harness rolled the release back and closed the change as **Unsuccessfu
 
 ## Walkthrough
 
+> [!IMPORTANT]
+> **Organiser setup:** before the event, grant attendees **Connector Viewer** (`core_connector_access`) on the connector the **Failure Analyst** agent template uses. Without it, the run is rejected with `Failed to expand Agent step 'Failure_Analyst' ... Missing permission core_connector_access`. Attendees can't fix this themselves.
+
 ### Step 1: Review the Failure Analyst Agent
 Your project has been provisioned with a **Failure Analyst** Worker Agent (identifier `failure_analyst`).
 
@@ -77,7 +80,20 @@ agent:
 | ---------- | ----------------------  | ----- |
 | Name | <pre>`Record Failure Analysis`</pre>| Adds the agent's category and summary to the change request's work notes |
 
-6. On the step's **Advanced** tab, under **Conditional Execution**, select **Always execute this step**, and set the **Failure Strategy** for **All Errors** to **Ignore**, so the work note is recorded even if the agent fails and **Close Failed Ticket** still runs
+6. Template steps have no **Advanced** tab, so set the conditional execution and failure strategy in YAML. Switch to **YAML**, find the `Record_Failure_Analysis` step in `rollbackSteps` and add the following at the same level as `name` and `identifier`:
+
+```yaml
+    when:
+      stageStatus: All
+    failureStrategies:
+      - onFailure:
+          errors:
+            - AllErrors
+          action:
+            type: Ignore
+```
+
+This means **Always execute this step**, with **Ignore** for **All Errors**, so the work note is recorded even if the agent fails and **Close Failed Ticket** still runs. Switch back to **Visual**
 7. Apply the changes and **Save** the pipeline. The rollback steps are now **Canary Delete**, **Rolling Rollback**, **Failure Analysis**, **Record Failure Analysis** and **Close Failed Ticket**
 
 ![Rollback steps with Failure Analysis](../images/lab10-rollback-studio.png "Rollback steps with Failure Analysis")

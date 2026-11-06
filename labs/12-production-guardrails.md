@@ -81,7 +81,7 @@ The **Change Verified Policy** denies the step if the change number doesn't star
 
 ### Bonus Activities
 - Add `"qa"` to `protected_environments` in the Production Guardrail policy. Which of your stages would be affected?
-- Open the **Policy Evaluations** tab of the execution to see every policy that was evaluated, both On Save and On Step
+- Open the **Policy Evaluations** tab of the execution to see the policies evaluated at run time, such as the On Step **Change Verified** checks. On Save evaluations happen when you save the pipeline, so they aren't listed there. Their result shows when you click **Save**: a failing On Save policy blocks the save
 
 ---
 
