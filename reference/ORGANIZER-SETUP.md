@@ -1,4 +1,4 @@
-# Organiser setup for the single-pipeline / HAR workshop
+# Organizer setup for the single-pipeline / HAR workshop
 
 Do this **once per attendee project** (or in the project template) before Lab 1. Attendees should not create registries during the session.
 
@@ -22,7 +22,7 @@ Reference YAML writes the registry as `registryRef: <+project.identifier>-worksh
 
 ## 1b. Shared backend image (org scope, once per event org)
 
-The backend is **not** built by attendees: the workshop CI only builds the frontend. Organisers build `backend/Dockerfile` once and every project in org **event_hws274** pulls it from an org-level HAR registry used only by this workshop.
+The backend is **not** built by attendees: the workshop CI only builds the frontend. Organizers build `backend/Dockerfile` once and every project in org **event_hws274** pulls it from an org-level HAR registry used only by this workshop.
 
 | Item | Value |
 | --- | --- |
@@ -38,7 +38,7 @@ The backend is **not** built by attendees: the workshop CI only builds the front
 
 ### Build and push (pick one)
 
-**A. Harness CI (no local Docker needed).** Import [`backend-image-pipeline.yaml`](backend-image-pipeline.yaml) into one organiser project in the org. The codebase must point at a `harness-devsecops` repo that has the merged app code. Run it with `backend_tag` = the new version.
+**A. Harness CI (no local Docker needed).** Import [`backend-image-pipeline.yaml`](backend-image-pipeline.yaml) into one organizer project in the org. The codebase must point at a `harness-devsecops` repo that has the merged app code. Run it with `backend_tag` = the new version.
 
 **B. Docker CLI from a laptop.** In the registry, open **Setup Client** and copy the exact login command and registry URL it shows. For Harness SaaS the image path is `pkg.harness.io/<account_id_lowercase>/workshop-shared/harness-workshop-backend:<tag>`, and the password is a Harness personal access token.
 
@@ -57,7 +57,7 @@ Deployments pull the image as the person running the pipeline, so attendees need
 1. Org **event_hws274** → **Access Control** → **Resource Groups** → new group `workshop-shared-registry` with resource scope **All (including all projects)** and resources **Artifact Registries → Specified → `workshop-shared`**
 2. **Roles** → new org role `Workshop Registry Reader` with Artifact Registries **View** and **Download** (pull) permissions
 3. **Role Assignments** → assign `Workshop Registry Reader` + `workshop-shared-registry` to the attendee user group (or `All Organization Users`)
-4. Organisers who push (option A or B) also need **Upload** on that registry
+4. Organizers who push (option A or B) also need **Upload** on that registry
 
 ### Point the 10 backend services at it (Terraform)
 
@@ -67,7 +67,7 @@ After the org's provisioning Terraform has run, apply [`terraform/backend-servic
 
 Rebuild and push a **new tag** whenever `backend/` changes (for example after `feat/amex-app-redesign` merges, which adds `/health`, `/api/orders`, `/deploy/member` and the release fields). Then update `tag` in `services/backend.yaml` and in the backend service already seeded in each project.
 
-The app's release bar shows the backend image tag (`APPLICATION_VERSION` = `<+artifacts.primary.tag>`). Every attendee's stable and canary backend run the same organiser tag, so stable and canary show the same version. What differs per attendee run is the **Harness execution #** (`<+pipeline.sequenceId>`) and whether the pod is canary or stable.
+The app's release bar shows the backend image tag (`APPLICATION_VERSION` = `<+artifacts.primary.tag>`). Every attendee's stable and canary backend run the same organizer tag, so stable and canary show the same version. What differs per attendee run is the **Harness execution #** (`<+pipeline.sequenceId>`) and whether the pod is canary or stable.
 
 ## 2. Database (unchanged provisioning, new usage)
 
@@ -105,6 +105,6 @@ If **frontend** / **backend** services are pre-seeded in the project template, s
 | Type | Harness Artifact Registry (`Har`) | Harness Artifact Registry (`Har`) |
 | Registry | `<project_id>-workshop` (project) | `workshop-shared` (org, section 1b) |
 | Image path | `harness-workshop` | `harness-workshop-backend` |
-| Tag | `<+variable.username>-<+pipeline.sequenceId>` | organiser version, e.g. `1.1.0` |
+| Tag | `<+variable.username>-<+pipeline.sequenceId>` | organizer version, e.g. `1.1.0` |
 
 Lab 3 still walks attendees through creating **frontend** when it isn't pre-seeded. Lab 4 selects **backend**; that service must already point at `workshop-shared/harness-workshop-backend`. Don't point it at the frontend image: that image is the Node frontend, not Django.

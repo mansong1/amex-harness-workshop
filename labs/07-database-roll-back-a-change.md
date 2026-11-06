@@ -70,6 +70,6 @@ Commit to `main`.
 
 | Aspect | Description |
 | :--- | :--- |
-| **Automatic rollbacks** | Backout is declared next to the forward change |
+| **Automatic rollbacks** | Rollback is declared next to the forward change |
 | **Same pipeline** | DB failure handling lives in `workshop`, not a side pipeline |
 | **Stable by default** | A bad changeset does not leave DB3 half-applied |

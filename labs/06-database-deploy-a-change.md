@@ -59,7 +59,7 @@ This is the Amex-requested post-deploy smoke test. Lab 13 later adds a separate 
 | Input | Value | Notes |
 | --- | --- | --- |
 | Name | <pre>`Schema Apply`</pre> | |
-| Container Registry | Harness Image / account default | Unmentioned in older guides; leave the default |
+| Container Registry | Harness Image / account default | Not covered in older guides; leave the default |
 | Migration Type | Liquibase | |
 | Select DB Schema | <pre>`DB`</pre> | |
 | Database Instance | <pre>`DB3`</pre> | Production instance only - no Dev→QA→Prod promotion in this lighter workshop |

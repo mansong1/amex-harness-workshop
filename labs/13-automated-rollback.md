@@ -66,7 +66,7 @@ Your project has been provisioned with a **Canary Smoke Test** step template.
 
 ### Step 3: Run and Review
 1. Click **Run**, approve the change in ServiceNow as in Lab 11 and approve the Harness Approval steps
-2. Once the canary is deployed, **Verify** analyses its Prometheus metrics over a 5 minute window and passes. **Canary Smoke Test** then fails with `FAILED: the canary returned HTTP 500 from /api/orders`
+2. Once the canary is deployed, **Verify** analyzes its Prometheus metrics over a 5-minute window and passes. **Canary Smoke Test** then fails with `FAILED: the canary returned HTTP 500 from /api/orders`
 3. Harness rolls back the stage before anyone is asked to approve it: **Canary Delete**, **Rolling Rollback** and then **Close Failed Ticket**. The release never reaches the stable deployment
 
 ![Canary Smoke Test rollback](../images/lab9-rollback-run.png "Canary Smoke Test rollback")
