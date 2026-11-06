@@ -59,6 +59,10 @@ Deployments pull the image as the person running the pipeline, so attendees need
 3. **Role Assignments** → assign `Workshop Registry Reader` + `workshop-shared-registry` to the attendee user group (or `All Organization Users`)
 4. Organisers who push (option A or B) also need **Upload** on that registry
 
+### Point the 10 backend services at it (Terraform)
+
+After the org's provisioning Terraform has run, apply [`terraform/backend-service/`](terraform/backend-service/). It imports each project's existing `backend` service and sets its artifact to `workshop-shared/harness-workshop-backend:<backend_tag>`. Read its README first: two Terraform states will own the same services.
+
 ### Rebuild whenever backend code changes
 
 Rebuild and push a **new tag** whenever `backend/` changes (for example after `feat/amex-app-redesign` merges, which adds `/health`, `/api/orders`, `/deploy/member` and the release fields). Then update `tag` in `services/backend.yaml` and in the backend service already seeded in each project.
