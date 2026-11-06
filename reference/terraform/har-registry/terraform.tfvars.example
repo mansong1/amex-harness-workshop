@@ -1,0 +1,5 @@
+account_id                     = "YOUR_ACCOUNT_ID"
+org_id                         = "event_hws274"
+registry_identifier            = "workshop-shared"
+attendee_user_group_identifier = "YOUR_EXISTING_ATTENDEE_GROUP_IDENTIFIER"
+principal_scope_level          = "organization" # use account for an account-level group
