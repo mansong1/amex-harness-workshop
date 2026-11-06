@@ -19,14 +19,11 @@
       <h1>Member Dashboard</h1>
       <p class="subtitle">Release status and traffic checks for the workshop canary.</p>
     </div>
-    <div class="release-badge" [class.release-badge--canary]="isCanary" [class.release-badge--stable]="!isCanary">
-      <span class="release-badge__label">{{ isCanary ? (ordersDegraded ? 'CANARY · ROLLING BACK' : 'CANARY') : 'STABLE' }}</span>
-      <span class="release-badge__version">{{ buildName }}</span>
-    </div>
   </header>
 
   <div class="status-strip" [class.status-strip--canary]="isCanary" [class.status-strip--stable]="!isCanary">
-    {{ isCanary ? 'CANARY' : 'STABLE' }} · {{ buildName }} · {{ releaseState }}
+    <span class="status-strip__label">{{ isCanary ? 'CANARY' : 'STABLE' }} · {{ buildName }} ·</span>
+    <span class="state-chip state-chip--{{ healthLevel }}">{{ releaseState }}</span>
   </div>
 
   <div class="dashboard__grid">

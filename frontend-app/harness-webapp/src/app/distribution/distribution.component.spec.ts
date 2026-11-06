@@ -28,6 +28,16 @@ describe('DistributionComponent', () => {
   it('shows an empty state with instructions before any traffic', () => {
     expect(el.querySelector('.empty__title')?.textContent).toContain('Press Start test');
     expect(el.querySelector('ngx-charts-bar-vertical-stacked')).toBeNull();
+    expect(el.querySelector('.total--errors .total__pct')?.textContent).toContain('—');
+    expect(el.querySelector('.split__target')?.textContent).toContain('Compare against');
+    expect(el.querySelector('.split__target')?.textContent).toContain("doesn't change routing");
+  });
+
+  it('turns the Errors card red once a request fails', () => {
+    component.record({ name: 'normal' });
+    component.record(null, true);
+    fixture.detectChanges();
+    expect(el.querySelector('.total--errors-active .total__pct')?.textContent).toContain('1');
   });
 
   it('has labelled Start test and Reset buttons', () => {
@@ -85,10 +95,17 @@ describe('distribution model', () => {
   });
 
   it('buckets into requests per second and keeps empty buckets', () => {
-    const data = bucketise([{ t: 0, tier: 'stable' }, { t: 0, tier: 'canary' }, { t: 12_000, tier: 'stable' }], 5000, 12);
+    const samples = [{ t: 0, tier: 'stable' as const }, { t: 0, tier: 'canary' as const }, { t: 12_000, tier: 'stable' as const }];
+    const data = bucketise(samples, 5000, 12, 16_000);
     expect(data.length).toBe(3);
-    expect(data[0].series.find((x: any) => x.name === 'stable')!.value).toBe(0.2);
+    expect(data[0].series.find((x: any) => x.name === 'Stable')!.value).toBe(0.2);
     expect(data[1].series.every((x: any) => x.value === 0)).toBeTrue();
+  });
+
+  it('leaves out the bucket that is still filling', () => {
+    const samples = [{ t: 0, tier: 'stable' as const }, { t: 12_000, tier: 'canary' as const }];
+    expect(bucketise(samples, 5000, 12, 12_500).length).toBe(2);
+    expect(bucketise([{ t: 1000, tier: 'stable' as const }], 5000, 12, 2000).length).toBe(0);
   });
 
   it('labels builds and judges the split', () => {

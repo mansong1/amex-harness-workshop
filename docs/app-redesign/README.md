@@ -6,7 +6,7 @@ Screenshots from the local dry run of the Member Dashboard workshop demo app.
 |---|---|
 | `home-stable-rewards.png` | Stable build, healthy, rewards tier from DB3 |
 | `home-canary-rollback-banner.png` | Canary build with `SMOKE_FAIL=1`: smoke test failed, rolling back |
-| `distribution.png` | Distribution Test after ~60s of simulated traffic with ~10% canary (target set to 10%) |
+| `distribution.png` | Distribution Test after ~60s of simulated traffic with ~10% canary ('Compare against' set to 10%) |
 | `distribution-empty.png` | Distribution Test before Start test is pressed |
 
 Colours: stable = brand blue `#006FCF`, canary = yellow `#FFC72C` with navy `#00175A` text; green/red are used only for health.

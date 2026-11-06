@@ -23,9 +23,9 @@ export interface Summary {
 }
 
 export const SERIES_COLORS: { name: string; value: string }[] = [
-  { name: 'stable', value: '#006fcf' },
-  { name: 'canary', value: '#FFC72C' },
-  { name: 'errors', value: '#c8102e' },
+  { name: 'Stable', value: '#006fcf' },
+  { name: 'Canary', value: '#FFC72C' },
+  { name: 'Errors', value: '#c8102e' },
 ];
 
 /** Backend answers /deploy/create with name 'canary' or 'normal' (= stable). */
@@ -62,11 +62,16 @@ function label(ms: number): string {
  * Group samples into fixed time buckets for a stacked bar chart
  * (ngx-charts multi-series format). Empty buckets inside the window are kept
  * so gaps in traffic are visible. Only the last `maxBuckets` are returned.
+ * The bucket that is still filling (ends after `now`) is left out so the last
+ * bar never looks like a traffic drop.
  */
-export function bucketise(samples: Sample[], bucketMs = 5_000, maxBuckets = 12) {
+export function bucketise(samples: Sample[], bucketMs = 5_000, maxBuckets = 12, now = Date.now()) {
   if (!samples.length) return [];
   const first = Math.floor(samples[0].t / bucketMs) * bucketMs;
-  const last = Math.floor(samples[samples.length - 1].t / bucketMs) * bucketMs;
+  const lastSample = Math.floor(samples[samples.length - 1].t / bucketMs) * bucketMs;
+  const lastComplete = Math.floor(now / bucketMs) * bucketMs - bucketMs;
+  const last = Math.min(lastSample, lastComplete);
+  if (last < first) return [];
   const start = Math.max(first, last - (maxBuckets - 1) * bucketMs);
   const buckets = new Map<number, { canary: number; stable: number; error: number }>();
   for (let b = start; b <= last; b += bucketMs) buckets.set(b, { canary: 0, stable: 0, error: 0 });
@@ -81,9 +86,9 @@ export function bucketise(samples: Sample[], bucketMs = 5_000, maxBuckets = 12) 
   return Array.from(buckets.entries()).map(([b, c]) => ({
     name: label(b),
     series: [
-      { name: 'stable', value: perSec(c.stable) },
-      { name: 'canary', value: perSec(c.canary) },
-      ...(withErrors ? [{ name: 'errors', value: perSec(c.error) }] : []),
+      { name: 'Stable', value: perSec(c.stable) },
+      { name: 'Canary', value: perSec(c.canary) },
+      ...(withErrors ? [{ name: 'Errors', value: perSec(c.error) }] : []),
     ],
   }));
 }

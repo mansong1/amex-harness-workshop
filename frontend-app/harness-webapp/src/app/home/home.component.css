@@ -8,13 +8,13 @@
 
 /* Always occupies the same height so the page doesn't jump when the smoke check returns. */
 .smoke-slot {
-  min-height: 52px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
   padding: 0.6rem 1rem;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   background: #eef2f8;
   color: #4b5563;
@@ -70,40 +70,12 @@
   max-width: 40rem;
 }
 
-.release-badge {
-  min-width: 180px;
-  border-radius: 12px;
-  padding: 0.85rem 1.1rem;
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0, 23, 90, 0.14);
-}
-
-.release-badge--stable {
-  background: #006fcf;
-  color: #fff;
-}
-
-.release-badge--canary {
-  background: #ffc72c;
-  color: #00175a;
-}
-
-.release-badge__label {
-  display: block;
-  font-size: 0.95rem;
-  letter-spacing: 0.1em;
-  font-weight: 800;
-}
-
-.release-badge__version {
-  display: block;
-  font-size: 1.375rem;
-  font-weight: 700;
-  margin-top: 0.2rem;
-}
-
 .status-strip {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
   border-radius: 12px;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1.25rem;
@@ -145,10 +117,19 @@
   overflow: hidden;
 }
 
-/* Canary card: canary yellow with navy text (never yellow text on white). */
+/* Canary card stays navy; a yellow stripe marks it so the strip is the only big yellow block. */
 .card--plastic.card--canary {
-  background: linear-gradient(145deg, #ffc72c 0%, #ffd866 100%);
+  border-top: 10px solid #ffc72c;
+}
+
+.card--canary .card__brand::after {
+  content: 'CANARY';
+  margin-left: 0.6rem;
+  background: #ffc72c;
   color: #00175a;
+  border-radius: 6px;
+  padding: 0.1rem 0.45rem;
+  letter-spacing: 0.1em;
 }
 
 .card__chip {
@@ -157,10 +138,6 @@
   border-radius: 6px;
   background: linear-gradient(135deg, #d4af37, #f5e6a3);
   margin-bottom: 1.25rem;
-}
-
-.card--canary .card__chip {
-  box-shadow: inset 0 0 0 1.5px rgba(0, 23, 90, 0.45);
 }
 
 .card__brand {
@@ -318,3 +295,15 @@
   padding: 0.1rem 0.35rem;
   border-radius: 4px;
 }
+
+.state-chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.1rem 0.85rem;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.state-chip--ok { background: #0b7a3b; }
+.state-chip--bad { background: #b00020; }
+.state-chip--pending { background: #4b5563; }

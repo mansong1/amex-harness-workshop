@@ -32,7 +32,9 @@ describe('HomeComponent', () => {
   it('shows a stable, healthy release without the word "normal"', () => {
     const fixture = setup({ canary: false, ordersFail: false });
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('.status-strip')?.textContent).toContain('STABLE · build-43 · Healthy');
+    expect(el.querySelector('.status-strip__label')?.textContent).toContain('STABLE · build-43');
+    expect(el.querySelector('.state-chip--ok')?.textContent).toContain('Healthy');
+    expect(el.querySelector('.release-badge')).toBeNull();
     expect(el.querySelector('.health')?.textContent).toContain('Healthy');
     expect(el.textContent).toContain('Harness execution #101');
     expect(el.textContent?.toLowerCase()).not.toContain('normal');
@@ -42,8 +44,8 @@ describe('HomeComponent', () => {
     const fixture = setup({ canary: true, ordersFail: true });
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.smoke-slot--failing')?.textContent).toContain('Smoke test failed');
-    expect(el.querySelector('.release-badge__label')?.textContent).toContain('CANARY · ROLLING BACK');
-    expect(el.querySelector('.status-strip')?.textContent).toContain('CANARY · build-43 · Rolling back');
+    expect(el.querySelector('.status-strip__label')?.textContent).toContain('CANARY · build-43');
+    expect(el.querySelector('.state-chip--bad')?.textContent).toContain('Rolling back');
     expect(el.querySelector('.health')?.textContent).toContain('Failing · smoke test');
     expect(el.querySelector('.health')?.classList).toContain('health--bad');
     expect(el.querySelector('.new-tag')?.textContent).toContain('New in build-43');

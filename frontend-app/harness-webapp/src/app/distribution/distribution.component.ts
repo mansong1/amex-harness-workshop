@@ -42,7 +42,7 @@ export class DistributionComponent implements OnDestroy {
   constructor(private apiService: ApiserviceService) {}
 
   get recent(): Sample[] {
-    return this.samples.slice(-14).reverse();
+    return this.samples.slice(-40).reverse();
   }
 
   get hasResponses(): boolean {

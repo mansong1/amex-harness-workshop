@@ -28,24 +28,25 @@
     </div>
     <div class="total total--errors" [class.total--errors-active]="summary.errors > 0">
       <span class="total__label">Errors</span>
-      <span class="total__pct">{{ summary.errors }}</span>
-      <span class="total__meta">{{ summary.errorPct }}% of {{ summary.total }} requests</span>
+      <span class="total__pct">{{ summary.total ? summary.errors : '—' }}</span>
+      <span class="total__meta">{{ summary.total ? summary.errorPct + '% of ' + summary.total + ' requests' : 'no requests yet' }}</span>
     </div>
   </section>
 
   <section class="split" [attr.data-verdict]="verdict">
     <label class="split__target">
-      Target canary share
-      <input type="number" min="0" max="100" [(ngModel)]="expectedCanaryPct" aria-label="Target canary share in percent" /> %
+      Compare against
+      <input type="number" min="0" max="100" [(ngModel)]="expectedCanaryPct" aria-label="Canary share to compare against, in percent" /> % canary
+      <span class="split__hint">(doesn't change routing)</span>
     </label>
     <span class="split__observed">
-      target {{ expectedCanaryPct }}% · observed {{ hasResponses ? summary.canaryPct + '%' : '—' }}
+      expected {{ expectedCanaryPct }}% · observed {{ hasResponses ? summary.canaryPct + '%' : '—' }}
     </span>
     <span class="split__verdict">
       @switch (verdict) {
         @case ('waiting') { Waiting for at least 20 responses }
-        @case ('on-target') { Within 5 points of target }
-        @case ('off-target') { More than 5 points off target }
+        @case ('on-target') { Within 5 points }
+        @case ('off-target') { More than 5 points off }
       }
     </span>
     <div class="split__bar" aria-hidden="true">
@@ -59,11 +60,14 @@
     @if (samples.length) {
       <div class="legend">
         @for (c of colors; track c.name) {
-          @if (c.name !== 'errors' || summary.errors > 0) {
+          @if (c.name !== 'Errors' || summary.errors > 0) {
             <span class="legend__item"><span class="legend__swatch" [style.background]="c.value"></span>{{ c.name }}</span>
           }
         }
       </div>
+      @if (!chartData.length) {
+        <p class="collecting">Collecting the first 5 seconds of traffic…</p>
+      }
       <div class="chart-wrap">
         <ngx-charts-bar-vertical-stacked
           [results]="chartData"
@@ -85,7 +89,7 @@
         <ol class="empty__steps">
           <li>Start this while the backend canary is running (Lab 5).</li>
           <li>Each request is answered by a stable or a canary pod; the page counts both.</li>
-          <li>Compare the observed canary share with the target above.</li>
+          <li>Compare the observed canary share with the expected share above.</li>
         </ol>
       </div>
     }
@@ -100,10 +104,11 @@
 
   @if (recent.length) {
     <section class="recent">
-      <h2>Latest responses</h2>
+      <h2>Latest responses <span class="recent__hint">newest first · hover for build</span></h2>
       <ul>
         @for (s of recent; track $index) {
-          <li class="chip chip--{{ s.tier }}">{{ s.tier }}@if (s.version) { · {{ build(s.version) }}}</li>
+          <li class="cell cell--{{ s.tier }}" [attr.title]="s.tier + (s.version ? ' · ' + build(s.version) : '')"
+              [attr.aria-label]="s.tier + (s.version ? ' ' + build(s.version) : '')"></li>
         }
       </ul>
     </section>

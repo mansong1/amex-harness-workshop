@@ -89,10 +89,8 @@
 .total--errors-active { background: #c8102e; color: #fff; border-color: #c8102e; }
 
 .total__label {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
 }
 
 .total__pct {
@@ -129,6 +127,12 @@
   border: 1.5px solid #9ca3af;
   border-radius: 8px;
   padding: 0.15rem 0.4rem;
+}
+
+.split__hint {
+  margin-left: 0.4rem;
+  color: #4b5563;
+  font-style: italic;
 }
 
 .split__observed {
@@ -260,16 +264,33 @@
   gap: 0.4rem;
 }
 
-.chip {
+.recent__hint {
   font-size: 0.95rem;
-  font-weight: 700;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-left: 0.5rem;
 }
 
-.chip--stable { background: #006fcf; color: #fff; }
-.chip--canary { background: #FFC72C; color: #00175a; }
-.chip--error { background: #c8102e; color: #fff; }
+.recent ul {
+  gap: 4px;
+}
+
+/* Flat squares, not buttons. */
+.cell {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+}
+
+.cell--stable { background: #006fcf; }
+.cell--canary { background: #FFC72C; }
+.cell--error { background: #c8102e; }
+
+.collecting {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0.25rem 0 0;
+}
 
 @media (max-width: 760px) {
   .dist-header { flex-direction: column; align-items: flex-start; }
