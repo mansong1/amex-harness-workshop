@@ -19,7 +19,7 @@ In this lab, the user validates canary deployments by observing traffic distribu
 5. Set **Compare against** to the canary share you expect. It is only a reference and doesn't change routing. With the default Canary step (1 canary pod next to 3 stable pods) that is about 25%. The page says whether the observed share is within 5 points of it
 
 > [!IMPORTANT]
-> The Distribution Test chart calls the backend on a separate host, `<username>.backend.<lab_subdomain>.harnessevents.com`. If the chart stays empty or every request fails, open that host in a new browser tab, accept the certificate warning, and go back. Run the test while the canary is still up. Once the pipeline passes **Approval** and deletes the canary, you'll only see normal traffic. The **Check Release** box may stay blank, so rely on the chart.
+> The Distribution Test chart calls the backend on a separate host, `<username>.backend.<lab_subdomain>.harnessevents.com`. If the chart stays empty or every request fails, open that host in a new browser tab, accept the certificate warning, and go back. Run the test while the canary is still up. Once the pipeline passes **Approval** and deletes the canary, you'll only see normal traffic. If the release bar on Home says **build unknown**, rely on the chart.
 
 ---
 

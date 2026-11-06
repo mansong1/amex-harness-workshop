@@ -1,0 +1,53 @@
+# One-off organiser pipeline: build backend/Dockerfile and push it to the org-scoped
+# HAR registry `workshop-shared` that every project in org event_hws274 pulls from.
+#
+# Import into ONE organiser project in org event_hws274 whose `harness-devsecops`
+# repo has the current app code (after feat/amex-app-redesign is merged).
+# Run it again, with a new tag, whenever backend/ changes, then bump the tag in
+# reference/services/backend.yaml (and the seeded backend service in each project).
+pipeline:
+  name: build-backend-image
+  identifier: build_backend_image
+  projectIdentifier: <+input>
+  orgIdentifier: event_hws274
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: hcr
+        repoName: harness-devsecops
+        build: <+input>
+  variables:
+    - name: backend_tag
+      type: String
+      description: Version tag for the backend image, e.g. 1.1.0 (never only latest)
+      required: true
+      value: <+input>.default(1.1.0)
+  stages:
+    - stage:
+        name: Build backend
+        identifier: build_backend
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Push backend to HAR
+                  identifier: push_backend_har
+                  spec:
+                    # HAR: registryRef, not connectorRef. Org-scoped registry.
+                    registryRef: workshop-shared
+                    repo: harness-workshop-backend
+                    tags:
+                      - <+pipeline.variables.backend_tag>
+                    caching: true
+                    dockerfile: /harness/backend/Dockerfile
+                    context: /harness/backend

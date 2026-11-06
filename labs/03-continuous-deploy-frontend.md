@@ -40,10 +40,10 @@ In this lab, the user extends the existing pipeline to take the artifact built i
 | File/Folder Path | <pre>`harness-deploy/frontend/manifests`</pre>||
 | Values.yaml | <pre>`harness-deploy/frontend/values.yaml`</pre>||
 | **Add Artifact Source** |||
-| Artifact Repository Type | Docker Registry ||
-| Docker Registry Connector | dockerhub ||
+| Artifact Repository Type | Artifact Registry | Harness Artifact Registry (HAR), not Docker Hub |
 | Artifact Source Identifier | <pre>`frontend`</pre>||
-| Image Path | <pre>`nikpap/harness-workshop`</pre>||
+| Registry | <pre>`<project_id>-workshop`</pre> | Same HAR registry the Build stage pushed to, e.g. `cut1hws274-workshop` |
+| Image Path | <pre>`harness-workshop`</pre>||
 | Tag | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| The field starts as `<+input>`. Click the pin, select **Expression** and paste the value |
 
 2. Click **Save** to close the service window and then click **Continue**

@@ -6,7 +6,7 @@
 - Run unit tests to verify build success  
 
 ## Overview
-In this lab, the user sets up a CI pipeline that runs source code tests, builds the executable, and pushes the artifact to a remote Docker repository. This establishes the foundation for a deployable artifact that can be promoted through environments.
+In this lab, the user sets up a CI pipeline that runs source code tests, builds the executable, and pushes the artifact to Harness Artifact Registry (HAR). This establishes the foundation for a deployable artifact that can be promoted through environments.
 
 ---
 
@@ -73,22 +73,24 @@ Navigate to the **Execution** tab and add the following steps:
 
 3. Click **Apply Changes**
 
-**Build and Push to Docker**
+**Build and Push to Harness Artifact Registry**
 1. Click **Add Step**, then **Add Step** again
 2. Select **Build and Push an image to Docker Registry** from the Step Library
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Name | <pre>`Push to DockerHub`</pre>||
-| Registry Type | Third-Party Artifact Registry | The default is Artifact Registry; select Third-Party to choose a Docker connector |
-| Docker Connector | dockerhub ||
-| Docker Repository | <pre>`nikpap/harness-workshop`</pre>||
+| Name | <pre>`Push to HAR`</pre>||
+| Registry Type | Harness Artifact Registry | Leave the default (do **not** switch to Third-Party / Docker Hub) |
+| Registry | <pre>`<project_id>-workshop`</pre> | Your project's pre-provisioned Docker HAR registry, named after your project identifier, e.g. `cut1hws274-workshop` (registry names are unique across the account). Pick it from the list. No Docker connector needed |
+| Image Name / Repository | <pre>`harness-workshop`</pre> | Image repository inside the HAR registry |
 | Tags | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| Click **+ Add** to add a tag row, then click the pin on that row, select **Expression** and paste the value |
 | **Optional Configuration** |||
 | Dockerfile | <pre>`/harness/frontend-app/harness-webapp/Dockerfile`</pre>| This tells Harness where the Dockerfile is for building the app |
 | Context | <pre>`/harness/frontend-app/harness-webapp`</pre>| This tells from where to run the instructions included in the Dockerfile |
 
 3. Click **Apply Changes**
+
+> YAML shape (for catch-up): `type: BuildAndPushDockerRegistry` with `spec.registryRef: <+project.identifier>-workshop` (or the literal name, e.g. `cut1hws274-workshop`) and `spec.repo: harness-workshop` — use **`registryRef`**, not `connectorRef`. Full pipeline: [`reference/workshop-pipeline.yaml`](../reference/workshop-pipeline.yaml).
 
 ---
 

@@ -1,0 +1,4 @@
+account_id  = "<account_id>"
+org_id      = "event_hws274"
+project_ids = ["cut1hws274" /* , ...the other 9 project ids */]
+backend_tag = "1.1.0"

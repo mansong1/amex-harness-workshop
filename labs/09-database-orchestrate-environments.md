@@ -1,112 +1,57 @@
-# Lab 9: Database DevOps - Orchestrate Changes Across Environments
+# Lab 9: Confirm the Unified Release
 
 ## Key Outcomes
-
-* **Single pipeline** for multi-env DB deployments
-* **Environment-specific guardrails**
-* **Reduced handoffs** and manual coordination
-
----
+- See app deploy + DB3 schema + smoke test in one execution
+- Read Database DevOps Overview for DB3
+- Know what this lighter design deliberately skips
 
 ## Overview
+Labs 6–8 folded Database DevOps into the `workshop` pipeline against **DB3** only. This short lab is a clean end-to-end confirmation - not a Dev→QA→Prod promotion.
 
-In this lab, the user promotes a database change through multiple environments - **dev, QA, and production** - using a single orchestrated pipeline. Each stage applies the change to a different target database with environment-specific configurations, policies, and approval steps. 
-
-As changes progress, the user can view which schema versions are deployed in each environment directly in the Harness UI - removing the need to manually track or document status.
+DB1 and DB2 remain in the project for exploration, but **this workshop does not deploy to them**. Promoting the same changelog across multiple instances would need extra stages and still fit on `k8s-db`, yet it would complicate the ten pre-provisioned projects. The Amex session keeps the lighter shape: one apply to DB3 inside the backend stage.
 
 ---
 
 ## Walkthrough
 
-### Step 1: Add QA Stage (DB2)
+### Step 1: Start from a clean changelog
+1. Open `db_changes` → `changelog.yaml`
+2. Ensure it matches [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml): `create-users-table` plus `add-rewards-tier-column` only
+3. In Database DevOps → **Overview**, remove any failed Lab 7 / Lab 8 changesets still listed on **DB3**
 
-1.  In your existing pipeline from Lab 6, after the existing stages click **Add Stage**
+### Step 2: Run the full workshop pipeline
+1. Open **`workshop`** → **Run**
+2. Branch: `main`
+3. Approve any gates you already added in earlier labs (none required yet if you are still in Part 2)
+4. Watch the **backend** stage:
+   - **DB** step group → **Schema Apply** on DB3 (no-op if `rewards_tier` is already applied)
+   - Canary → Verify / Approval → Canary Delete
+   - **Primary Deployment** → **Rolling Deployment** (stable pods move to the new build)
+   - **Smoke Test** against `/health` → 200
 
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Stage Name | <pre>`Deploy QA`</pre>||
+### Step 3: Verify Overview
+1. Database DevOps → **Overview**
+2. **DB3** shows the rewards_tier changeset as applied
+3. Optionally hit the app UI and confirm the member field that reads `rewards_tier` (from the app redesign) is present
 
+---
 
-2. Click **Add Step** and select **Add Step Group**
+## What you are not building (yet)
+| Heavier design | This workshop |
+| --- | --- |
+| Separate Deploy DB Schema pipeline | One `workshop` pipeline |
+| Dev / QA / Prod DB stages (DB1→DB2→DB3) | DB3 only |
+| Policy "only in prod" via Rego `environments` | Policy on the Schema Apply step that targets DB3 |
+| New namespaces or infrastructures | Existing `k8s-db` + DB3 |
 
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Name       | <pre>`DB`</pre>||
-| Enable     | Containerized Execution||
-| Kubernetes Cluster | k8s-prod || 
-
-3. Inside the step group, click **Add Step**.
-4. From the available out-of-the-box steps, select **Apply Schema**
-5. Configure accordingly
-
-
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Name       | <pre>`Deploy Database Schema - QA`</pre>||
-| Select DB Schema     | DB||
-| Database Instance | DB2 || 
-
-6. Click **Apply Changes**.
-
-
-### Step 2: Add Production Stage (DB3)
-
-
-1.  In your existing pipeline from Lab 6, after the existing stages click **Add Stage**
-
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Stage Name | <pre>`Deploy Prod`</pre>||
-
-
-2. Click **Add Step** and select **Add Step Group**
-
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Name       | <pre>`DB`</pre>||
-| Enable     | Containerized Execution||
-| Kubernetes Cluster | k8s-prod || 
-
-3. Inside the step group, click **Add Step**.
-4. From the available out-of-the-box steps, select **Apply Schema**
-5. Configure accordingly
-
-
-| Input      | Value     | Notes |
-| ---------- | ---------------------- | ----- |
-| Name       | <pre>`Deploy Database Schema - Prod`</pre>||
-| Select DB Schema     | DB||
-| Database Instance | DB3 || 
-
-6. Click **Apply Changes**.
-
-
-### Step 3: Save and Run the Pipeline
-
-1.  Click **Save** to finalize the multi-stage pipeline.
-2.  In Git, remove the table drop change and the broken change from Lab 7, then commit to kick off the pipeline.
-3.  Observe the deployment of the previously committed schema change through:
-    * Stage 1: DB1 (Dev)
-    * Stage 2: DB2 (QA)
-    * Stage 3: DB3 (Production)
-4.  Verify successful execution in all stages.
-
-### Step 4: View Schema Overview
-
-1.  From the left-hand nav, go to **Overview**.
-2.  Observe the green checkmarks next to Dev, QA, and Production, indicating: 
-    * Where the change has been applied
-    * That each deployment completed successfully
-3.  This provides visibility across all environments from a single pane of glass.
+Catch-up YAML for the merged pipeline (HAR build, HAR services, DB step group, smoke test) lives in [`reference/`](../reference/).
 
 ---
 
 ## Value Callouts
 
-| Feature | Description |
+| Aspect | Description |
 | :--- | :--- |
-| **Unified Workflow** | One pipeline governs the full lifecycle of a database change from dev to prod. |
-| **Environment-Specific Control** | Each stage can have its own policies, approvers, and rollback settings. |
-| **Schema Visibility** | The Harness UI shows which schema changes have been applied where, so teams always know the current state across environments. |
-| **Reduced Toil** | No need to manually coordinate between environments or hand off to DBAs. |
-| **Production Readiness by Design** | Staged rollouts and approvals ensure only validated changes reach production. |
+| **Unified release** | One execution tells the story from commit to healthy app + schema |
+| **Provisioning-safe** | Fits the ten event projects without new environments |
+| **Room to grow** | Multi-instance promotion can return later without undoing this lab |

@@ -1,84 +1,75 @@
-# Lab 7: Database DevOps - Roll Back a Change
+# Lab 7: Roll Back a Failed Schema Change
 
 ## Key Outcomes
-- Safe failure handling  
-- Pre-validated rollback plans  
-- Confidence in change velocity  
-
----
+- Pre-validate a rollback plan next to Schema Apply
+- Recover automatically when a changeset fails on DB3
+- Clean up a failed changeset before the next lab
 
 ## Overview
-In this lab, the user intentionally deploys a database changelog that introduces a breaking or invalid change (for example, dropping a required column). The pipeline detects the failure during deployment to a non-production environment and automatically triggers a rollback using a predefined backout script.
-
-This simulates a real-world scenario where a change fails validation or breaks application behavior, and highlights how Harness enables fast recovery without manual intervention or firefighting.
+You intentionally push a breaking Liquibase changeset. Schema Apply fails on **DB3**, and the **Schema Rollback** step (conditional on the previous step failing) restores the database. This is the same failure-handling pattern you will later see for the application canary in Part 3.
 
 ---
 
 ## Walkthrough
 
-### Step 1: Add a Rollback Step
-1. Navigate to your pipeline and locate the step group containing your **Schema Apply** step.  
-2. Hover to the right of the **Schema Apply** step and click the **➕** icon to add a new step to the right of the existing step.
+### Step 1: Add Schema Rollback
+1. Open the **`workshop`** pipeline → **backend** stage → **DB** step group
+2. Hover to the right of **Schema Apply** and click **➕**
+3. Select **Rollback Schema**
 
-<img width="160" height="130" alt="image" src="../images/lab07-db-add-step.png" />
+| Input | Value | Notes |
+| --- | --- | --- |
+| Name | <pre>`Schema Rollback`</pre> | |
+| Select DB Schema | <pre>`DB`</pre> | |
+| Select DB Instance | <pre>`DB3`</pre> | Same instance as Schema Apply |
+| Rollback Count | <pre>`1`</pre> | |
 
-   
-3. From the list of steps find and select the **Rollback Schema** step.
-4. Configure accordingly:
-
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Name       | <pre>`Schema Rollback`</pre>||
-| Select DB Schema     | DB||
-| Select DB Instance | DB1 || 
-| Rollback Count | <pre>`1`</pre>||
-
-
-**Add Conditional Execution**
-1. Within the same step configuration, scroll to the top
-2. From the navigation bar, select **Advanced** 
-3. Click **Conditional Execution**.  
-4. Choose **If the previous step fails**.  
-5. Click **Apply Changes**, then **Save** the pipeline.
+4. In the step, open **Advanced** → **Conditional Execution**
+5. Choose **If the previous step fails** (stage/step status Failure)
+6. **Apply Changes** and **Save**
 
 ---
 
-### Step 2: Push a Breaking Change to Git
-In your configured Git repository, add a changeSet that attempts to make an invalid change:
+### Step 2: Push a breaking change
+In **`db_changes`**, append this changeset after `add-rewards-tier-column`. Prefer pasting the full file from [`db/examples/changelog-with-breaking-change.yaml`](../db/examples/changelog-with-breaking-change.yaml) if the editor mangles indentation.
 
 ```yaml
   - changeSet:
-     id: add-duplicate-column
-     author: harness-lab
-     changes:
-       - addColumn:
-           tableName: users
-           columns:
-             - column:
-                 name: id
-                 type: int
-                 constraints:
-     rollback:
-       - sql:
-           comment: This is a no-op rollback for the invalid column addition.
-           sql: SELECT 1;
+      id: add-duplicate-column
+      author: harness-lab
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+      rollback:
+        - sql:
+            comment: This is a no-op rollback for the invalid column addition.
+            sql: SELECT 1;
 ```
 
+Commit to `main`.
 
-Commit and push the change to the main branch.
+---
 
 ## Result
+1. The trigger starts `workshop`
+2. **Schema Apply** fails (duplicate `id` column - can you see why?)
+3. **Schema Rollback** runs because of the conditional execution
+4. Database DevOps → **Overview** shows the failed changeset on **DB3**
 
-The pipeline will automatically trigger:
-1. The breaking change will attempt to apply and fail. **Can you identify why?**
-2. The rollback plan will be executed automatically.
-3. The environment will be restored to a stable state.
-4. Navigate to **Overview** under the Database DevOps module and review the change sets versions and status
+> [!IMPORTANT]
+> **Clean up before Lab 8.** In Database DevOps → Overview for DB3, remove the failed `add-duplicate-column` changeset (and any drop-table attempt left from experimentation). Also delete that changeset from `changelog.yaml` in Git and commit, so the next lab starts from a clean schema. Leaving it in place clutters Overview and can confuse later runs.
+
+---
 
 ## Value Callouts
 
 | Aspect | Description |
 | :--- | :--- |
-| **Automatic Rollbacks** | Backout plans are pre-validated and ready to run, reducing mean time to recovery (MTTR) |
-| **No Manual Intervention** | Developers do not need to SSH into environments or locate old scripts - rollback is built into the pipeline. |
-| **Resilience as Default** | Pipelines are designed to fail gracefully, keeping environments stable and deploy-ready. |
+| **Automatic rollbacks** | Backout is declared next to the forward change |
+| **Same pipeline** | DB failure handling lives in `workshop`, not a side pipeline |
+| **Stable by default** | A bad changeset does not leave DB3 half-applied |

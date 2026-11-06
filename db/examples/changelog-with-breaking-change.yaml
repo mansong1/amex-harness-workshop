@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users-table
+      author: harness-lab
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(100)
+              - column:
+                  name: last_name
+                  type: varchar(100)
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: add-rewards-tier-column
+      author: harness-lab
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: rewards_tier
+                  type: varchar(50)
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: add-duplicate-column
+      author: harness-lab
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+      rollback:
+        - sql:
+            comment: This is a no-op rollback for the invalid column addition.
+            sql: SELECT 1;

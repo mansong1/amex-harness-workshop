@@ -1,0 +1,299 @@
+# Reference: final-state workshop pipeline after Labs 1–9 (lighter single-pipeline design).
+#
+# Catch-up import: Pipeline Studio → YAML → paste, then fix project-specific refs:
+#   - orgIdentifier / projectIdentifier
+#   - HAR registryRef: <project_id>-workshop (frontend, per project; written as <+project.identifier>-workshop) and workshop-shared (backend, org scope);
+#     see ORGANISER-SETUP.md
+#   - codebase connector / repo names
+#   - template versions for Fortify / OWASP / Compile if your project differs
+#
+# Depends on feat/amex-app-redesign for GET /health and the rewards_tier UI field.
+# Labs 10–15 add ServiceNow, production policies, canary smoke-test failure, AI agent, CVE policy
+# on top of this shape; those steps are intentionally omitted here.
+#
+# Unverified without a live Harness import: whether DBSchemaApply is accepted inside a
+# Deployment stage step group (fallback: Custom stage "database" immediately before backend).
+
+pipeline:
+  name: workshop
+  identifier: workshop
+  projectIdentifier: <+input>
+  orgIdentifier: <+input>
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: hcr
+        repoName: harness-devsecops
+        build:
+          type: branch
+          spec:
+            branch: main
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Test
+                  name: Run Tests With Intelligence
+                  identifier: Run_Tests_With_Intelligence
+                  spec:
+                    command: pip install pytest && cd ./python-tests
+              - step:
+                  type: Template
+                  name: Compile
+                  identifier: Compile
+                  template:
+                    templateRef: Compile_Application
+                    versionLabel: v1
+              - step:
+                  type: Template
+                  name: Fortify
+                  identifier: Fortify
+                  template:
+                    templateRef: Devx_Fortify_Scan
+                    versionLabel: v1
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: Push to HAR
+                  identifier: Push_to_HAR
+                  spec:
+                    # Harness Artifact Registry — use registryRef, NOT connectorRef.
+                    # Per-project registry <project_id>-workshop. If the expression is
+                    # rejected, use the literal name, e.g. cut1hws274-workshop.
+                    registryRef: <+project.identifier>-workshop
+                    repo: harness-workshop
+                    tags:
+                      - <+variable.username>-<+pipeline.sequenceId>
+                    caching: true
+                    dockerfile: /harness/frontend-app/harness-webapp/Dockerfile
+                    context: /harness/frontend-app/harness-webapp
+              - step:
+                  type: Template
+                  name: OWASP
+                  identifier: OWASP
+                  template:
+                    templateRef: OWASP
+                    versionLabel: v1
+    - stage:
+        name: frontend
+        identifier: frontend
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            serviceRef: frontend
+            serviceInputs:
+              serviceDefinition:
+                type: Kubernetes
+                spec:
+                  artifacts:
+                    primary:
+                      primaryArtifactRef: frontend
+                      sources:
+                        - identifier: frontend
+                          type: Har
+                          spec:
+                            registryRef: <+project.identifier>-workshop  # or literal, e.g. cut1hws274-workshop
+                            type: docker
+                            spec:
+                              imagePath: harness-workshop
+                              tag: <+variable.username>-<+pipeline.sequenceId>
+          environment:
+            environmentRef: prod
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: k8s
+          execution:
+            steps:
+              - step:
+                  name: Rollout Deployment
+                  identifier: rolloutDeployment
+                  type: K8sRollingDeploy
+                  timeout: 10m
+                  spec:
+                    skipDryRun: false
+                    pruningEnabled: false
+            rollbackSteps:
+              - step:
+                  name: Rollback Rollout Deployment
+                  identifier: rollbackRolloutDeployment
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback
+    - stage:
+        name: backend
+        identifier: backend
+        type: Deployment
+        spec:
+          deploymentType: Kubernetes
+          service:
+            # Artifact is fixed in the service: workshop-shared/harness-workshop-backend
+            # (organiser-built, org scope). No runtime inputs.
+            serviceRef: backend
+          environment:
+            environmentRef: prod
+            useFromStage:
+              stage: frontend
+          execution:
+            steps:
+              # Schema first, then canary. Infra: k8s-db (not k8s-prod).
+              - stepGroup:
+                  name: DB
+                  identifier: DB
+                  sharedPaths: []
+                  steps:
+                    - step:
+                        type: DBSchemaApply
+                        name: Schema Apply
+                        identifier: Schema_Apply
+                        spec:
+                          connectorRef: account.harnessImage
+                          migrationType: Liquibase
+                          dbSchema: DB
+                          dbInstance: DB3
+                          tag: <+pipeline.sequenceId>
+                        timeout: 10m
+                        when:
+                          stageStatus: Success
+                        failureStrategies: []
+                    - step:
+                        type: DBSchemaRollback
+                        name: Schema Rollback
+                        identifier: Schema_Rollback
+                        spec:
+                          connectorRef: account.harnessImage
+                          migrationType: Liquibase
+                          dbSchema: DB
+                          dbInstance: DB3
+                          changeSetCount: 1
+                        timeout: 10m
+                        when:
+                          stageStatus: Failure
+                  stepGroupInfra:
+                    type: KubernetesDirect
+                    spec:
+                      connectorRef: k8s-db
+              - stepGroup:
+                  name: Canary Deployment
+                  identifier: canaryDeployment
+                  steps:
+                    - step:
+                        name: Canary Deployment
+                        identifier: canaryDeployment
+                        type: K8sCanaryDeploy
+                        timeout: 10m
+                        spec:
+                          instanceSelection:
+                            type: Count
+                            spec:
+                              count: 1
+                          skipDryRun: false
+                    - step:
+                        type: Verify
+                        name: AI Verify
+                        identifier: AI_Verify
+                        timeout: 2h
+                        spec:
+                          type: Canary
+                          spec:
+                            monitoredService:
+                              type: Default
+                              spec: {}
+                            isFixedNodes: false
+                            speculatedNodes: ""
+                          duration: 5m
+                          sensitivity: HIGH
+                          trafficControlEnabled: false
+                    - step:
+                        type: HarnessApproval
+                        name: Approval
+                        identifier: Approval
+                        timeout: 1d
+                        spec:
+                          approvalMessage: Approve canary before continuing
+                          includePipelineExecutionHistory: true
+                          approvers:
+                            userGroups:
+                              - All_Project_Users
+                            minimumCount: 1
+                            disallowPipelineExecutor: false
+                    - step:
+                        name: Canary Delete
+                        identifier: canaryDelete
+                        type: K8sCanaryDelete
+                        timeout: 10m
+                        spec: {}
+                  failureStrategies:
+                    - onFailure:
+                        errors:
+                          - AllErrors
+                        action:
+                          type: StageRollback
+              # Promote: replace the stable pods with the new build (Canary strategy default).
+              - stepGroup:
+                  name: Primary Deployment
+                  identifier: primaryDeployment
+                  steps:
+                    - step:
+                        name: Rolling Deployment
+                        identifier: rollingDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
+              - step:
+                  type: Http
+                  name: Smoke Test
+                  identifier: Smoke_Test
+                  timeout: 2m
+                  spec:
+                    url: https://<+variable.username>.backend.<+variable.lab_subdomain>.harnessevents.com/health
+                    method: GET
+                    assertion: <+httpResponseCode>==200
+                    headers: []
+                    inputVariables: []
+                    outputVariables: []
+                  failureStrategies:
+                    - onFailure:
+                        errors:
+                          - Unknown
+                        action:
+                          type: StageRollback
+            rollbackSteps:
+              - step:
+                  name: Canary Delete
+                  identifier: rollbackCanaryDelete
+                  type: K8sCanaryDelete
+                  timeout: 10m
+                  spec: {}
+              - step:
+                  name: Rolling Rollback
+                  identifier: rollingRollback
+                  type: K8sRollingRollback
+                  timeout: 10m
+                  spec: {}
+        failureStrategies:
+          - onFailure:
+              errors:
+                - AllErrors
+              action:
+                type: StageRollback

@@ -1,52 +1,44 @@
-# Lab 8: Database DevOps - Enforce Governance and Policy
+# Lab 8: Block Destructive Schema Changes
 
 ## Key Outcomes
-
-* Targeted **policy-as-code** enforcement
-* Standardized review and **approval gates**
-* **Risk mitigation** before deployment
-
----
+- Enforce policy-as-code on Schema Apply
+- Stop a `dropTable` before it reaches DB3
+- Understand what the policy actually evaluates
 
 ## Overview
+You attach an OPA policy set to the **Schema Apply** step so destructive SQL (drop table/column/database/schema) is rejected at preview/validate time. The policy runs whenever that step runs - in this workshop, against **DB3**.
 
-In this lab, the user attempts to push a database changelog that **drops a table** - an action disallowed in this environment. The pipeline evaluates the change using integrated policy-as-code (OPA) rules and immediately blocks execution.
-
-The user reviews the policy failure, understands the violation, and updates the changelog to meet organizational standards before resubmitting.
+> [!NOTE]
+> Older workshop material put `environments: ["prod"]` in the Rego and claimed environment-specific control. That field is **not** consulted by the Database DevOps policy evaluation today (a dry run blocked the same change on Dev). The Rego below therefore has **no** `environments` key. Scope comes from **which step** you attach the policy set to, not from that unused field.
 
 ---
 
 ## Walkthrough
 
-### Step 1: Create a Policy
-
-1.  In the left-hand panel, go to **Project Settings**.
-2.  Select **Policies**, then click **New Policy**.
-    > You may have to click the **X** in the upper right to dismiss a pop-up.
-
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Name       | <pre>`Block Destructive SQL`</pre>||
-
-3. Let's block **dropping data**
-4. Copy the REGO code below into the policy editor
+### Step 1: Create the policy
+1. **Project Settings** → **Policies** → **New Policy**
+2. Name it `Block Destructive SQL`
+3. Paste:
 
 ```opa
 package db_sql
 
+# Destructive statements are denied whenever this policy is evaluated.
+# Attach the policy set only to the Schema Apply steps that should enforce it.
+# (There is no working per-environment filter in this Rego surface today.)
+
 rules := [
   {
-    "types": ["mssql","oracle","postgres","mysql"],
-    "environments": ["prod"],
+    "types": ["mssql", "oracle", "postgres", "mysql"],
     "regex": [
       "drop\\s+table",
       "drop\\s+column",
       "drop\\s+database",
       "drop\\s+schema"
     ]
-  },{
+  },
+  {
     "types": ["oracle"],
-    "environments": ["prod"],
     "regex": ["drop\\s+catalog"]
   }
 ]
@@ -54,76 +46,58 @@ rules := [
 deny[msg] {
   some i, k, l
   rule := rules[i]
-  regex.match(concat("",[".*",rule.regex[k],".*"]), lower(input.sqlStatements[l]))
+  regex.match(concat("", [".*", rule.regex[k], ".*"]), lower(input.sqlStatements[l]))
   msg := "dropping data is not permitted"
 }
 ```
 
-5. Click **Save**
+4. **Save**
 
-   
-### Step 2: Create a Policy Set and Enforce in Pipeline
+---
 
-1. From the top right navigation bar click **Policy Sets**
-2. Click **+ New Policy Set**
+### Step 2: Create and enforce the policy set
+1. Open **Policy Sets** → **+ New Policy Set**
 
-| Input      | Value     | Notes |
-| ---------- | ----------------------  | ----- |
-| Name       | <pre>`Prevent Destructive Changes`</pre>||
-| Entity Type | Custom ||
-| On what event | On Step || 
-  
-3. Click **Continue**.
-4. Under Policy to Evaluate, click **Add Policy**.
-5. Select the **Block Destructive SQL** policy.
-6. Click **Apply**, then **Finish**.
-7. Toggle **Enforce**.
+| Input | Value | Notes |
+| --- | --- | --- |
+| Name | <pre>`Prevent Destructive Changes`</pre> | |
+| Entity Type | Custom | |
+| On what event | On Step | |
 
-<img width="828" height="136" alt="image" src="../images/lab08-db-policy-enforce.png" />
+2. **Continue** → **Add Policy** → select **Block Destructive SQL** → **Apply** → **Finish**
+3. Toggle **Enforce**
 
-**Add the policy set in the pipeline**
+**Attach it to Schema Apply**
+1. Edit **`workshop`** → **backend** → **DB** → **Schema Apply**
+2. **Advanced** → **Policy Enforcement** → **Add/Modify Policy Set**
+3. Select **Prevent Destructive Changes** (project scope)
+4. **Apply Changes** → **Save** the pipeline
 
-1. Navigate to the pipeline studio (in edit mode)
-2. Open the **Schema Apply** step
-3. Within the step configuration and from the top navigation bar select **Advanced**
-4. Expand the **Policy Enforcement** section
-5. Click on **Add/Modify Policy Set**
-6. From the navigation bar select your project
-7. Select the **Prevent Destructive Changes** policy set
-8. Click **Apply Changes**
-9. **Save Pipeline**
-    
-> The new Policy Set is now active and linked to the pipeline runtime.
+---
 
-### Step 3: Push a Disallowed Change to Git
+### Step 3: Push a disallowed change
+1. Confirm Lab 7's failed `add-duplicate-column` is gone from Git and from DB3 Overview
+2. In `db_changes`, append:
 
-1.  In your configured Git repo, add a **changeSet** that violates the policy (attempting to drop a table):
+```yaml
+  - changeSet:
+      id: drop-users-table
+      author: harness-lab
+      changes:
+        - dropTable:
+            tableName: users
+```
 
-  ```yaml
-    - changeSet:
-        id: 2025-05-21-drop-users-table
-        author: harness-lab
-        changes:
-          - dropTable:
-              tableName: users
-  ```
+   Or use [`db/examples/changelog-with-drop-table.yaml`](../db/examples/changelog-with-drop-table.yaml).
 
-2.  Commit and push the change to the monitored branch (main).
-3.  Notice that the changeset attempts to drop the **users** table
+3. Commit to `main`
 
+#### Pipeline observation
+- Schema Apply evaluates the policy during preview/validate
+- The step fails with **dropping data is not permitted**
+- DB3 is unchanged
 
-#### Pipeline Observation
-
-The pipeline will automatically trigger. Observe that:
-
-* The policy is triggered as part of the pipeline execution.
-* The execution fails before deployment.
-* The pipeline halts with the error:
-    > dropping data is not permitted
-
-Review pipeline output and logs
-<img width="800" height="392" alt="image" src="../images/lab08-db-policy-violation.png" />
-
+Remove the `drop-users-table` changeset from Git (and any failed record in Overview) before Lab 9 so the next run is clean.
 
 ---
 
@@ -131,8 +105,6 @@ Review pipeline output and logs
 
 | Aspect | Description |
 | :--- | :--- |
-| **Guardrails, Not Roadblocks** | Policies surface issues early without slowing down developers who follow best practices. |
-| **Standardized Governance** | Approval workflows and checks are consistent across teams, environments, and databases. |
-| **Policy-as-Code** | Governance is defined in code and version-controlled - just like everything else. |
-| **Risk Reduction** | Disallowed or unsafe changes are caught before they affect production. |
-| **Scalable Compliance** | Teams can move fast while meeting security and audit requirements at scale. |
+| **Guardrails** | Destructive DDL is stopped before it touches DB3 |
+| **Policy as code** | The rule is versioned Rego, not a tribal checklist |
+| **Honest scope** | Enforcement follows the step you attach, not an unused `environments` field |
