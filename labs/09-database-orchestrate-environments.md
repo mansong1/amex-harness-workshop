@@ -26,6 +26,7 @@ DB1 and DB2 remain in the project for exploration, but **this workshop does not 
 4. Watch the **backend** stage:
    - **DB** step group → **Schema Apply** on DB3 (no-op if `rewards_tier` is already applied)
    - Canary → Verify / Approval → Canary Delete
+   - **Primary Deployment** → **Rolling Deployment** (stable pods move to the new build)
    - **Smoke Test** against `/health` → 200
 
 ### Step 3: Verify Overview

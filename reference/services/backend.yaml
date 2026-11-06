@@ -25,6 +25,9 @@ service:
               valuesPaths:
                 - harness-deploy/backend/values.yaml
               skipResourceVersioning: false
+      # Organiser-built Django image in the org-scoped HAR registry shared by all
+      # projects in org event_hws274 (see ORGANISER-SETUP.md section 1b). Attendees
+      # don't build the backend; bump the tag when the organisers rebuild it.
       artifacts:
         primary:
           primaryArtifactRef: backend
@@ -32,8 +35,8 @@ service:
             - identifier: backend
               type: Har
               spec:
-                registryRef: workshop
+                registryRef: workshop-shared
                 type: docker
                 spec:
-                  imagePath: harness-workshop
-                  tag: <+variable.username>-<+pipeline.sequenceId>
+                  imagePath: harness-workshop-backend
+                  tag: "1.1.0"

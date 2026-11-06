@@ -20,7 +20,7 @@ The teaching change adds a nullable `rewards_tier` column on `users`. The app re
 ### Step 1: Add a post-deploy smoke test
 1. Open the existing **`workshop`** pipeline in Pipeline Studio
 2. Select the **backend** stage
-3. After **Canary Delete** (the last step of the canary flow), click **+** and add an **HTTP** step
+3. After **Rolling Deployment** in the **Primary Deployment** step group (the last step of the backend execution, after the canary flow), click **+** and add an **HTTP** step
 
 | Input | Value | Notes |
 | --- | --- | --- |

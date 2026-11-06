@@ -2,7 +2,8 @@
 #
 # Catch-up import: Pipeline Studio → YAML → paste, then fix project-specific refs:
 #   - orgIdentifier / projectIdentifier
-#   - HAR registryRef (see ORGANISER-SETUP.md)
+#   - HAR registryRef: workshop (frontend, per project) and workshop-shared (backend, org scope);
+#     see ORGANISER-SETUP.md
 #   - codebase connector / repo names
 #   - template versions for Fortify / OWASP / Compile if your project differs
 #
@@ -142,23 +143,9 @@ pipeline:
         spec:
           deploymentType: Kubernetes
           service:
+            # Artifact is fixed in the service: workshop-shared/harness-workshop-backend
+            # (organiser-built, org scope). No runtime inputs.
             serviceRef: backend
-            serviceInputs:
-              serviceDefinition:
-                type: Kubernetes
-                spec:
-                  artifacts:
-                    primary:
-                      primaryArtifactRef: backend
-                      sources:
-                        - identifier: backend
-                          type: Har
-                          spec:
-                            registryRef: workshop
-                            type: docker
-                            spec:
-                              imagePath: harness-workshop
-                              tag: <+variable.username>-<+pipeline.sequenceId>
           environment:
             environmentRef: prod
             useFromStage:
@@ -258,6 +245,19 @@ pipeline:
                           - AllErrors
                         action:
                           type: StageRollback
+              # Promote: replace the stable pods with the new build (Canary strategy default).
+              - stepGroup:
+                  name: Primary Deployment
+                  identifier: primaryDeployment
+                  steps:
+                    - step:
+                        name: Rolling Deployment
+                        identifier: rollingDeployment
+                        type: K8sRollingDeploy
+                        timeout: 10m
+                        spec:
+                          skipDryRun: false
+                          pruningEnabled: false
               - step:
                   type: Http
                   name: Smoke Test
