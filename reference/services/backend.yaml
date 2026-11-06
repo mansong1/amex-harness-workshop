@@ -25,9 +25,10 @@ service:
               valuesPaths:
                 - harness-deploy/backend/values.yaml
               skipResourceVersioning: false
-      # Organiser-built Django image in the org-scoped HAR registry shared by all
-      # projects in org event_hws274 (see ORGANISER-SETUP.md section 1b). Attendees
-      # don't build the backend; bump the tag when the organisers rebuild it.
+      # Organizer-built Django image in the account-level HAR registry workshop-shared
+      # (see ORGANIZER-SETUP.md section 1b). Provisioning Terraform sets this on each
+      # project's backend service. Attendees don't build the backend; bump the tag
+      # via backend_image_tag when organizers rebuild it.
       artifacts:
         primary:
           primaryArtifactRef: backend

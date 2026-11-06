@@ -2,8 +2,8 @@
 #
 # Catch-up import: Pipeline Studio → YAML → paste, then fix project-specific refs:
 #   - orgIdentifier / projectIdentifier
-#   - HAR registryRef: <project_id>-workshop (frontend, per project; written as <+project.identifier>-workshop) and workshop-shared (backend, org scope);
-#     see ORGANISER-SETUP.md
+#   - HAR registryRef: <org_id>-workshop (frontend, org scope; written as <+org.identifier>-workshop) and workshop-shared (backend, account scope);
+#     see ORGANIZER-SETUP.md
 #   - codebase connector / repo names
 #   - template versions for Fortify / OWASP / Compile if your project differs
 #
@@ -70,9 +70,9 @@ pipeline:
                   identifier: Push_to_HAR
                   spec:
                     # Harness Artifact Registry — use registryRef, NOT connectorRef.
-                    # Per-project registry <project_id>-workshop. If the expression is
-                    # rejected, use the literal name, e.g. cut1hws274-workshop.
-                    registryRef: <+project.identifier>-workshop
+                    # Org registry <org_id>-workshop. If the expression is
+                    # rejected, use the literal name, e.g. event_hws274-workshop.
+                    registryRef: <+org.identifier>-workshop
                     repo: harness-workshop
                     tags:
                       - <+variable.username>-<+pipeline.sequenceId>
@@ -105,7 +105,7 @@ pipeline:
                         - identifier: frontend
                           type: Har
                           spec:
-                            registryRef: <+project.identifier>-workshop  # or literal, e.g. cut1hws274-workshop
+                            registryRef: <+org.identifier>-workshop  # or literal, e.g. event_hws274-workshop
                             type: docker
                             spec:
                               imagePath: harness-workshop
@@ -146,7 +146,7 @@ pipeline:
           deploymentType: Kubernetes
           service:
             # Artifact is fixed in the service: workshop-shared/harness-workshop-backend
-            # (organiser-built, org scope). No runtime inputs.
+            # (organizer-built, account scope). No runtime inputs.
             serviceRef: backend
           environment:
             environmentRef: prod
