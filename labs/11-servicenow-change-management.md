@@ -15,7 +15,7 @@ In regulated environments you can't ship to production without following change 
 
 ### Step 1: Review the Approval Required Policy
 1. From the secondary menu, select **Project Settings** and select **Policies**
-2. Select the **Policies** tab, open **Approval Required Policy** and review the rego. It denies any pipeline where a **Deployment** stage is not preceded by an **Approval** stage
+2. Select the **Policies** tab, open **Approval Required Policy** and review the Rego. It denies any pipeline where a **Deployment** stage is not preceded by an **Approval** stage
 3. Click **Select Input** on the right and select the following values
 
 | Input      | Value     | Notes |
@@ -28,7 +28,7 @@ In regulated environments you can't ship to production without following change 
 4. Select your most recent pipeline save, click **Apply** and then click **Test**. What do you think will happen?
 
 > [!NOTE]
-> Lab 10 required a Harness Approval step **inside** each deployment stage (frontend got one there; backend already had Lab 4's). Change policy goes further and requires an approval stage **before** any deployment stage, so the test fails. Failure is success, the policy is working as designed
+> Lab 10 required a Harness Approval step **inside** each deployment stage (frontend got one there; backend already had Lab 4's). Change policy goes further and requires an approval stage **before** any deployment stage, so the test fails. Failure is success: the policy is working as designed.
 
 ![Policy as Code](../images/lab7-opa.gif "Policy as Code")
 ![Policy test result](../images/lab7-policy-test.png "Policy test result")
@@ -72,7 +72,7 @@ In regulated environments you can't ship to production without following change 
 
 ![Template overview](../images/lab7-overview.png "Template overview")
 
-5. Click on each step to see how it is configured. As a template user you cannot change this enterprise-approved template, only the template administrator can. Note how expressions such as `<+pipeline.executionUrl>` and `<+execution.steps.Create_Ticket.ticket.ticketNumber>` populate the ticket and the approval
+5. Click on each step to see how it is configured. As a template user you cannot change this enterprise-approved template; only the template administrator can. Note how expressions such as `<+pipeline.executionUrl>` and `<+execution.steps.Create_Ticket.ticket.ticketNumber>` populate the ticket and the approval
 
 ---
 

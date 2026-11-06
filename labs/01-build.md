@@ -29,7 +29,7 @@ In this lab, the user sets up a CI pipeline that runs source code tests, builds 
 
 ### Step 2: Add a Build Stage
 1. From Pipeline Studio, click **Add Stage** and select **Build** as the Stage Type
-2. Enter the following values and click on **Set Up Stage**
+2. Enter the following values and click **Set Up Stage**
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
@@ -86,7 +86,7 @@ Navigate to the **Execution** tab and add the following steps:
 | Tags | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| Click **+ Add** to add a tag row, then click the pin on that row, select **Expression** and paste the value |
 | **Optional Configuration** |||
 | Dockerfile | <pre>`/harness/frontend-app/harness-webapp/Dockerfile`</pre>| This tells Harness where the Dockerfile is for building the app |
-| Context | <pre>`/harness/frontend-app/harness-webapp`</pre>| This tells from where to run the instructions included in the Dockerfile |
+| Context | <pre>`/harness/frontend-app/harness-webapp`</pre>| This sets the directory from which to run the instructions in the Dockerfile |
 
 3. Click **Apply Changes**
 

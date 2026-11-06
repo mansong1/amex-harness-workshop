@@ -13,7 +13,7 @@ In Lab 13 Harness rolled the release back and closed the change as **Unsuccessfu
 ## Walkthrough
 
 > [!IMPORTANT]
-> **Organiser setup:** before the event, grant attendees **Connector Viewer** (`core_connector_access`) on the connector the **Failure Analyst** agent template uses. Without it, the run is rejected with `Failed to expand Agent step 'Failure_Analyst' ... Missing permission core_connector_access`. Attendees can't fix this themselves.
+> **Organizer setup:** before the event, grant attendees **Connector Viewer** (`core_connector_access`) on the connector the **Failure Analyst** agent template uses. Without it, the run is rejected with `Failed to expand Agent step 'Failure_Analyst' ... Missing permission core_connector_access`. Attendees can't fix this themselves.
 
 ### Step 1: Review the Failure Analyst Agent
 Your project has been provisioned with a **Failure Analyst** Worker Agent (identifier `failure_analyst`).
