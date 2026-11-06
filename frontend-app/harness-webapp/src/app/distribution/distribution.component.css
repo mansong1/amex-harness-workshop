@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900");
-
 :host {
   display: block;
   font-family: 'Montserrat', sans-serif;
@@ -7,7 +5,7 @@
 }
 
 .dist-page {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem 1.25rem 3rem;
 }
@@ -16,14 +14,14 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: flex-end;
   margin-bottom: 1.25rem;
 }
 
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  font-size: 1rem;
   color: #006fcf;
   margin: 0 0 0.35rem;
   font-weight: 700;
@@ -31,51 +29,249 @@
 
 .dist-header h1 {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: 2.5rem;
+  font-weight: 700;
 }
 
 .subtitle {
   margin: 0.4rem 0 0;
-  color: #445;
+  color: #374151;
+  font-size: 1rem;
 }
 
 .dist-controls {
   display: flex;
-  align-items: center;
   gap: 0.75rem;
 }
 
-.icon-btn {
-  background: #00175a;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  width: 44px;
-  height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.btn {
+  border-radius: 999px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 2px solid #006fcf;
   cursor: pointer;
 }
 
-.back-link {
+.btn-primary {
+  background: #006fcf;
+  color: #fff;
+}
+
+.btn-outline {
+  background: #fff;
   color: #006fcf;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.7fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.total {
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.total--stable { background: #006fcf; color: #fff; }
+.total--canary { background: #FFC72C; color: #00175a; }
+.total--errors { background: #fff; color: #374151; border: 1px solid #d9e2f1; }
+.total--errors-active { background: #c8102e; color: #fff; border-color: #c8102e; }
+
+.total__label {
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.total__pct {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.total__meta {
+  font-size: 1rem;
   font-weight: 600;
-  text-decoration: none;
+}
+
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  background: #fff;
+  border: 1px solid #d9e2f1;
+  border-radius: 16px;
+  padding: 0.9rem 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #374151;
+}
+
+.split__target input {
+  width: 4.5rem;
+  margin-left: 0.4rem;
+  font: inherit;
+  font-weight: 700;
+  color: #00175a;
+  border: 1.5px solid #9ca3af;
+  border-radius: 8px;
+  padding: 0.15rem 0.4rem;
+}
+
+.split__observed {
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: #00175a;
+}
+
+.split__verdict {
+  font-weight: 700;
+}
+
+.split[data-verdict='on-target'] .split__verdict { color: #0b7a3b; }
+.split[data-verdict='off-target'] .split__verdict { color: #c8102e; }
+
+.split__bar {
+  position: relative;
+  flex-basis: 100%;
+  display: flex;
+  height: 18px;
+  border-radius: 999px;
+  overflow: visible;
+  background: #e5e7eb;
+}
+
+.split__stable { background: #006fcf; border-radius: 999px 0 0 999px; }
+.split__canary { background: #FFC72C; border-radius: 0 999px 999px 0; }
+
+.split__marker {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 3px;
+  background: #00175a;
 }
 
 .chart-card {
-  background: #00175a;
+  background: #fff;
+  border: 1px solid #d9e2f1;
   border-radius: 16px;
-  padding: 1rem;
-  box-shadow: 0 12px 32px rgba(0, 23, 90, 0.2);
+  padding: 1rem 1.25rem;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend__swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .chart-wrap {
-  height: 360px;
+  height: 380px;
   width: 100%;
 }
 
-.ngx-charts-outer text {
-  fill: #fff !important;
+/* ngx-charts renders SVG outside this component's encapsulation. */
+:host ::ng-deep .chart-wrap text {
+  fill: #1f2937 !important;
+  font-size: 16px !important;
+  font-family: 'Montserrat', sans-serif;
+}
+
+:host ::ng-deep .chart-wrap .gridline-path {
+  stroke: #e5e7eb !important;
+}
+
+.empty {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.empty__title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 1rem;
+}
+
+.empty__steps {
+  text-align: left;
+  font-size: 1.05rem;
+  color: #374151;
+  margin: 0;
+}
+
+.notice {
+  margin: 1rem 0 0;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: #fdecee;
+  color: #7f1d1d;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.recent h2 {
+  font-size: 1.1rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.recent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+}
+
+.chip--stable { background: #006fcf; color: #fff; }
+.chip--canary { background: #FFC72C; color: #00175a; }
+.chip--error { background: #c8102e; color: #fff; }
+
+@media (max-width: 760px) {
+  .dist-header { flex-direction: column; align-items: flex-start; }
+  .totals { grid-template-columns: 1fr; }
 }

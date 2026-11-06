@@ -1,19 +1,19 @@
-.amex-nav {
+.app-nav {
   background: #00175a;
-  border-bottom: 3px solid #006fcf;
   color: #fff;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.amex-nav__inner {
+.app-nav__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0.75rem 1.25rem;
+  padding: 0.7rem 1.25rem;
 }
 
-.amex-nav__brand {
+.app-nav__brand {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -21,35 +21,47 @@
   color: #fff;
 }
 
-.amex-nav__logo {
-  height: 36px;
-  width: auto;
-  display: block;
-  border-radius: 4px;
-  background: #fff;
+/* Neutral monogram, deliberately not a real card-network logo. */
+.app-nav__mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #006fcf;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
 }
 
-.amex-nav__title {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
+.app-nav__title {
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
-.amex-nav__links {
+.app-nav__sub {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.app-nav__links {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-.amex-nav__link {
+.app-nav__link {
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.35rem 0;
+  border-bottom: 3px solid transparent;
 }
 
-.amex-nav__link.active,
-.amex-nav__link:hover {
+.app-nav__link.active,
+.app-nav__link:hover {
   color: #fff;
-  border-bottom: 2px solid #006fcf;
+  border-bottom-color: #4aa3ff;
 }

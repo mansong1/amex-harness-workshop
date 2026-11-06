@@ -1,234 +1,124 @@
-import { Component } from '@angular/core';
-import { Color, NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
+import { Component, OnDestroy } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ApiserviceService } from '../_services/apiservice.service';
-import { ColorHelper } from '@swimlane/ngx-charts'; // Import ColorHelper from ngx-charts
+import {
+  SERIES_COLORS, Sample, Summary, bucketise, buildLabel, splitVerdict, summarise, tierFromResponse,
+} from './distribution.model';
 
+/**
+ * Distribution Test: sends synthetic POST /deploy/create requests and shows which
+ * backend tier (stable vs canary) answered each one, so attendees can watch the
+ * canary traffic split live during Lab 5.
+ */
 @Component({
   selector: 'app-distribution',
   standalone: true,
-  imports: [NgxChartsModule],
+  imports: [NgxChartsModule, FormsModule],
   templateUrl: './distribution.component.html',
   styleUrl: './distribution.component.css',
 })
-export class DistributionComponent {
-  data: any[] = []; // Your data from backend
-  distribution: any[] = [];
-  normalThumbnail: string = 'path/to/normal-thumbnail.png';
-  nonNormalThumbnail: string = 'path/to/non-normal-thumbnail.png';
-  viewpie: [number, number] = [300, 300];
-  // options
-  gradient: boolean = true;
-  showLegend: boolean = true;
-  showLabels: boolean = true;
-  isDoughnut: boolean = false;
-  legendPosition: string = 'below';
-  barChartData: any[] = [];
+export class DistributionComponent implements OnDestroy {
+  /** Requests sent per second while the test runs. */
+  readonly ratePerSecond = 4;
+  /** Auto-stop so a forgotten tab doesn't hammer the backend. */
+  readonly maxDurationMs = 10 * 60 * 1000;
+  readonly windowSeconds = 60;
+  readonly colors = SERIES_COLORS;
 
-  distributionData: any[]=[];
+  /** Expected canary share in %. Default Canary step = 1 canary pod next to 3 stable pods. */
+  expectedCanaryPct = 25;
 
+  samples: Sample[] = [];
+  summary: Summary = summarise([]);
+  chartData: any[] = [];
+  running = false;
+  lastError = '';
+  latestBuild: { canary?: string; stable?: string } = {};
+
+  private tickId: any = null;
+  private stopId: any = null;
 
   constructor(private apiService: ApiserviceService) {}
 
-  barData: any;
-
-  ngOnInit(): void {
-    
-
+  get recent(): Sample[] {
+    return this.samples.slice(-14).reverse();
   }
 
-
-  run(){
-    this.autoRefreshGraph(10)
-    this.performApiCallRepeatedly(10)
+  get hasResponses(): boolean {
+    return this.summary.canary + this.summary.stable > 0;
   }
 
-  refreshDistribution() {
-    // Calculate the start and end timestamps for the last 1 hour
-    const now = new Date();
-    const startTimestamp = new Date(now.getTime() - 400000); // 1 hour in milliseconds
-    const endTimestamp = now;
-    const groupedData = this.groupDataByTime(this.distributionData);
-    this.data = this.transformDataForChart(groupedData);
-    console.log(this.distributionData)
-
-  //  this.apiService
-  //    .getDistribution(startTimestamp, endTimestamp)
-  //    .subscribe((data) => {
-   //     const groupedData = this.groupDataByTime(data);
-
-    //    this.data = this.transformDataForChart(groupedData);
-
-    //  });
-
-
+  get verdict() {
+    return splitVerdict(this.summary.canaryPct, this.expectedCanaryPct, this.summary.canary + this.summary.stable);
   }
 
-  name = 'Angular';
-  view: [number, number] = [600, 400];
-  colorScheme: Color = {
-    name: 'myScheme',
-    selectable: true,
-    group: ScaleType.Time,
-    domain: ['#9370DB', '#87CEFA', '#FA8072', '#FF7F50', '#90EE90', '#9370DB'],
-  };
-
-  customColor: Color = {
-    name: 'legend',
-    selectable: true,
-    group: ScaleType.Time,
-    domain: ['#FFFFFFF'],
-  };
-
-
-  customColorFunction = (name: string)=> {
-    return name === 'canary' ? '#FF7F50' : '#9370DB'; // If series name is 'canary', return yellow, otherwise return dodgerblue
-  };
-
-
-  groupByBucket(data: any[]) {
-    // Initialize groupedData
-    const groupedData: {
-      [bucket: string]: { [name: string]: { value: number }[] };
-    } = {};
-
-    // Group data by bucket
-    data.forEach((item) => {
-      const bucket = item.extra.bucket;
-      const name = item.name;
-      const value = item.value;
-
-      if (!groupedData[bucket]) {
-        groupedData[bucket] = {};
-      }
-
-      if (!groupedData[bucket][name]) {
-        groupedData[bucket][name] = [];
-      }
-
-      groupedData[bucket][name].push({ value });
-    });
-
-      console.log(groupedData)
-
+  get backendUnreachable(): boolean {
+    return this.summary.errors > 0 && this.summary.canary + this.summary.stable === 0;
   }
 
-  // Function to group data by time with 1-minute resolution
-  groupDataByTime(data: any[]) {
-    const groupedData: { [key: string]: { [key: number]: number } } = {};
-    data.forEach((entry) => {
-      const timestamp = Math.floor(entry.created_at / 5) * 10; // Round to the nearest minute
-      if (!groupedData[entry.name]) {
-        groupedData[entry.name] = {};
-      }
-      if (!groupedData[entry.name][timestamp]) {
-        groupedData[entry.name][timestamp] = 0;
-      }
-      groupedData[entry.name][timestamp]++;
-    });
-    console.log(groupedData)
-    return groupedData;
+  build(version?: string): string {
+    return buildLabel(version);
   }
 
+  start(): void {
+    if (this.running) return;
+    this.running = true;
+    this.tickId = setInterval(() => this.sendOne(), 1000 / this.ratePerSecond);
+    this.stopId = setTimeout(() => this.stop(), this.maxDurationMs);
+    this.sendOne();
+  }
 
-    // Function to group data by time with 1-minute resolution
-    groupDataByTimeBarChart(data: any[]) {
-      const groupedData: { [key: string]: { [key: number]: number } } = {};
-      data.forEach((entry) => {
-        const timestamp = Math.floor(entry.created_at / 30) * 30; // Round to the nearest minute
-        if (!groupedData[entry.name]) {
-          groupedData[entry.name] = {};
-        }
-        if (!groupedData[entry.name][timestamp]) {
-          groupedData[entry.name][timestamp] = 0;
-        }
-        groupedData[entry.name][timestamp]++;
-      });
-      console.log(groupedData)
-      return groupedData;
+  /** Kept for backwards compatibility with the old template/handlers. */
+  run(): void {
+    this.start();
+  }
+
+  stop(): void {
+    this.running = false;
+    if (this.tickId) clearInterval(this.tickId);
+    if (this.stopId) clearTimeout(this.stopId);
+    this.tickId = this.stopId = null;
+  }
+
+  reset(): void {
+    this.samples = [];
+    this.lastError = '';
+    this.latestBuild = {};
+    this.recompute();
+  }
+
+  ngOnDestroy(): void {
+    this.stop();
+  }
+
+  /** Record one response (or failure). Public so specs can feed data without HTTP. */
+  record(body: any, failed = false, at = Date.now()): void {
+    const sample: Sample = failed
+      ? { t: at, tier: 'error' }
+      : { t: at, tier: tierFromResponse(body), version: body?.application_version || '', pod: body?.pod || '' };
+    if (sample.tier !== 'error' && sample.version) {
+      this.latestBuild = { ...this.latestBuild, [sample.tier]: sample.version };
     }
-
-  transformBarData(groupedData:any)
-  {
-// Step 1: Determine the timestamps
-const timestamps = Object.keys(groupedData.normal);
-
-// Step 2: Iterate through the timestamps and aggregate the values for each category
-const dataArray = timestamps.map(timestamp => {
-  const normalValue = groupedData.normal[timestamp] || 0;
-  const canaryValue = groupedData.canary[timestamp] || 0;
-  return {
-    name: new Date(parseInt(timestamp) * 1000).toISOString(), // Convert timestamp to ISO string
-    series: [
-      { name: "canary", value: canaryValue },
-      { name: "normal", value: normalValue }
-    ]
-  };
-});
-
-console.log(dataArray)
-return dataArray
-
-  }
-  transformDataForChart(groupedData: {
-    [key: string]: { [key: number]: number };
-  }) {
-    const chartData = [];
-    for (const name in groupedData) {
-      if (groupedData.hasOwnProperty(name)) {
-        const seriesData = [];
-        for (const [timestamp, count] of Object.entries(groupedData[name])) {
-          seriesData.push({
-            name: new Date(parseInt(timestamp) * 1000), // Convert timestamp to JavaScript Date object
-            value: count, // Number of entries at this timestamp
-          });
-        }
-        chartData.push({ name, series: seriesData });
-      }
-    }
-    console.log(chartData)
-    return chartData;
+    this.samples.push(sample);
+    // Keep memory bounded: 10 minutes at 4 req/s is 2400 samples.
+    if (this.samples.length > 5000) this.samples.splice(0, this.samples.length - 5000);
+    this.recompute();
   }
 
-  autoRefreshGraph(duration: number): void {
-    const interval = 30 * 1000; // Interval in milliseconds (1 second)
-    const endTime = Date.now() + duration * 60 * 1000; // Convert minutes to milliseconds
-
-    const apiCall = () => {
-      // Your API call logic here
-      this.refreshDistribution();
-    };
-
-    const intervalId = setInterval(apiCall, interval);
-
-    // Stop the interval after the specified duration
-    setTimeout(() => {
-      clearInterval(intervalId);
-
-    }, duration * 20 * 1000);
+  private sendOne(): void {
+    // The backend decides the tier from its own pod name; the posted name is ignored.
+    this.apiService.generateEntry('normal').subscribe({
+      next: (body) => this.record(body),
+      error: (err) => {
+        this.lastError = err?.status ? `HTTP ${err.status}` : 'network error';
+        this.record(null, true);
+      },
+    });
   }
 
-
-
-  performApiCallRepeatedly(duration: number): void {
-    const interval = 1000; // Interval in milliseconds (1 second)
-    const endTime = Date.now() + duration * 60 * 1000; // Convert minutes to milliseconds
-
-    const apiCall = () => {
-      // Your API call logic here
-      this.apiService.generateEntry('normal').subscribe((data) => {
-        this.distributionData.push(data)
-        console.log('API call executed at', new Date().toISOString());
-        
-      });
-    };
-
-    const intervalId = setInterval(apiCall, interval);
-
-    // Stop the interval after the specified duration
-    setTimeout(() => {
-      clearInterval(intervalId);
-      console.log('API calls stopped after 10 minutes');
-    }, duration * 60 * 1000);
+  private recompute(): void {
+    this.summary = summarise(this.samples);
+    this.chartData = bucketise(this.samples, 5000, this.windowSeconds / 5);
   }
-
 }

@@ -1,22 +1,33 @@
-@if (ordersDegraded) {
-  <div class="rollback-banner" role="alert">
-    Orders service unavailable — canary will roll back
-  </div>
-}
+<div class="smoke-slot" [class.smoke-slot--failing]="ordersDegraded" [class.smoke-slot--ok]="ordersChecked && !ordersDegraded"
+     [attr.role]="ordersDegraded ? 'alert' : null">
+  @if (ordersDegraded) {
+    <svg class="smoke-slot__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+    </svg>
+    <span><strong>Smoke test failed:</strong> Orders service unavailable. Harness is rolling back to the stable build.</span>
+  } @else if (ordersChecked) {
+    <span>Smoke test passing · Orders service OK</span>
+  } @else {
+    <span>Checking smoke test…</span>
+  }
+</div>
 
 <div class="dashboard">
   <header class="dashboard__header">
     <div>
-      <p class="eyebrow">Account overview</p>
-      <h1>Member Card Dashboard</h1>
-      <p class="subtitle">Release status, member profile, and traffic validation for the workshop canary.</p>
+      <p class="eyebrow">Release status</p>
+      <h1>Member Dashboard</h1>
+      <p class="subtitle">Release status and traffic checks for the workshop canary.</p>
     </div>
     <div class="release-badge" [class.release-badge--canary]="isCanary" [class.release-badge--stable]="!isCanary">
-      <span class="release-badge__label">{{ isCanary ? 'CANARY' : 'STABLE' }}</span>
-      <span class="release-badge__version">{{ applicationVersion || 'n/a' }}</span>
-      <span class="release-badge__meta">{{ deploymentType }}</span>
+      <span class="release-badge__label">{{ isCanary ? (ordersDegraded ? 'CANARY · ROLLING BACK' : 'CANARY') : 'STABLE' }}</span>
+      <span class="release-badge__version">{{ buildName }}</span>
     </div>
   </header>
+
+  <div class="status-strip" [class.status-strip--canary]="isCanary" [class.status-strip--stable]="!isCanary">
+    {{ isCanary ? 'CANARY' : 'STABLE' }} · {{ buildName }} · {{ releaseState }}
+  </div>
 
   <div class="dashboard__grid">
     <section class="card card--plastic" [class.card--canary]="isCanary">
@@ -40,19 +51,19 @@
       <dl class="facts">
         <div>
           <dt>Deployment</dt>
-          <dd>{{ isCanary ? 'canary' : 'stable / normal' }}</dd>
+          <dd>{{ isCanary ? 'Canary' : 'Stable' }}</dd>
         </div>
         <div>
-          <dt>Image / version</dt>
-          <dd>{{ applicationVersion || 'n/a' }}</dd>
+          <dt>Build</dt>
+          <dd>{{ buildName }}</dd>
         </div>
         <div>
           <dt>Last execution</dt>
-          <dd>{{ lastExecution || 'n/a' }}</dd>
+          <dd>{{ executionLabel }}</dd>
         </div>
         <div>
           <dt>Health</dt>
-          <dd>{{ healthStatus }}</dd>
+          <dd class="health health--{{ healthLevel }}">{{ healthLabel }}</dd>
         </div>
       </dl>
       <div class="actions">
@@ -63,19 +74,22 @@
 
     <section class="panel panel--member">
       <h2>Member profile</h2>
-      <dl class="facts">
+      <dl class="facts facts--stacked">
         <div>
           <dt>Name</dt>
           <dd>{{ memberName }}</dd>
         </div>
         <div>
           <dt>Email</dt>
-          <dd>{{ member?.email || '—' }}</dd>
+          <dd class="wrap">{{ member?.email || '—' }}</dd>
         </div>
         @if (hasRewardsTier) {
           <div class="rewards-row">
             <dt>Rewards tier</dt>
-            <dd class="rewards-tier">{{ member.rewards_tier }}</dd>
+            <dd>
+              <span class="tier-chip">{{ member.rewards_tier }}</span>
+              @if (isCanary) { <span class="new-tag">New in {{ buildName }}</span> }
+            </dd>
           </div>
         }
       </dl>

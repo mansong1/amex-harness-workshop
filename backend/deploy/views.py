@@ -73,6 +73,15 @@ class RequestEntryCreate(generics.CreateAPIView):
         deployment_type=deployment_type
         serializer.save(name=deployment_type)
 
+    def create(self, request, *args, **kwargs):
+        # Additive fields for the Distribution Test page: which tier/version/pod
+        # answered. Existing 'name' and 'created_at' are unchanged.
+        response = super().create(request, *args, **kwargs)
+        response.data['deployment_type'] = response.data.get('name', 'normal')
+        response.data['application_version'] = _application_version()
+        response.data['pod'] = os.getenv('HOSTNAME', '')
+        return response
+
 
 class ViewDiagram(generics.ListAPIView):
     permission_classes = [AllowAny]

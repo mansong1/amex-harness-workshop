@@ -1,12 +1,12 @@
-<nav class="amex-nav">
-  <div class="amex-nav__inner">
-    <a href="/" aria-current="page" class="amex-nav__brand" aria-label="home">
-      <img src="assets/amex-logo.svg" alt="American Express" class="amex-nav__logo" />
-      <span class="amex-nav__title">Member Dashboard</span>
+<nav class="app-nav">
+  <div class="app-nav__inner">
+    <a routerLink="/home" class="app-nav__brand" aria-label="Member Dashboard home">
+      <span class="app-nav__mark" aria-hidden="true">MD</span>
+      <span class="app-nav__title">Member Dashboard <span class="app-nav__sub">· Workshop demo</span></span>
     </a>
-    <div class="amex-nav__links">
-      <a class="amex-nav__link active" href="/home">Home</a>
-      <a class="amex-nav__link" href="/distribution">Distribution</a>
+    <div class="app-nav__links">
+      <a class="app-nav__link" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">Home</a>
+      <a class="app-nav__link" routerLink="/distribution" routerLinkActive="active">Distribution</a>
     </div>
   </div>
 </nav>

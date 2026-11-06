@@ -5,6 +5,7 @@ import { ApiserviceService } from '../_services/apiservice.service';
 import { HarnessFfService } from '../harness-ff.service';
 import { HarnessOfferComponent } from '../harness-offer/harness-offer.component';
 import { CommonModule } from '@angular/common';
+import { buildLabel } from '../distribution/distribution.model';
 
 @Component({
   selector: 'app-home',
@@ -29,7 +30,8 @@ export class HomeComponent {
   isModalOpen = false;
   member: any = null;
   ordersDegraded = false;
-  healthStatus = 'checking…';
+  ordersChecked = false;
+  healthStatus = 'checking';
 
   ngOnInit(): void {
     this.refreshExecutionDetails();
@@ -43,6 +45,38 @@ export class HomeComponent {
       return 'Alex Member';
     }
     return `${this.member.first_name || ''} ${this.member.last_name || ''}`.trim() || 'Alex Member';
+  }
+
+  get buildName(): string {
+    return buildLabel(this.applicationVersion);
+  }
+
+  /** 'exec-101' / '101' -> 'Harness execution #101'. */
+  get executionLabel(): string {
+    const raw = (this.lastExecution || '').toString().trim();
+    if (!raw) return 'n/a';
+    const m = raw.match(/(\d+)$/);
+    return m ? `Harness execution #${m[1]}` : `Harness execution ${raw}`;
+  }
+
+  get healthLevel(): 'ok' | 'bad' | 'pending' {
+    if (this.ordersDegraded || this.healthStatus === 'degraded' || this.healthStatus === 'unreachable') return 'bad';
+    return this.healthStatus === 'ok' ? 'ok' : 'pending';
+  }
+
+  get healthLabel(): string {
+    if (this.ordersDegraded) return 'Failing · smoke test';
+    switch (this.healthStatus) {
+      case 'ok': return 'Healthy';
+      case 'degraded': return 'Degraded';
+      case 'unreachable': return 'Unreachable';
+      default: return 'Checking…';
+    }
+  }
+
+  get releaseState(): string {
+    if (this.ordersDegraded) return this.isCanary ? 'Rolling back' : 'Failing';
+    return this.healthLabel;
   }
 
   get hasRewardsTier(): boolean {
@@ -86,8 +120,8 @@ export class HomeComponent {
   pollOrders(){
     this.apiService.getOrders()
     .subscribe({
-      next: () => { this.ordersDegraded = false; },
-      error: () => { this.ordersDegraded = true; }
+      next: () => { this.ordersDegraded = false; this.ordersChecked = true; },
+      error: () => { this.ordersDegraded = true; this.ordersChecked = true; }
     });
   }
 

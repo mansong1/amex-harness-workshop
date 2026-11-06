@@ -64,3 +64,26 @@ class WorkshopHookTests(TestCase):
         body = response.json()
         for key in ('service_name', 'last_execution_id', 'application_version', 'deployment_type'):
             self.assertIn(key, body)
+
+
+class DistributionCreateTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    @override_settings(DEPLOYMENT_VARIABLE='backend-deployment-canary-abc', APPLICATION_VERSION='v2')
+    def test_create_reports_canary_tier_and_version(self):
+        response = self.client.post('/deploy/create', {'name': 'normal'}, format='json')
+        self.assertEqual(response.status_code, 201)
+        body = response.json()
+        self.assertEqual(body['name'], 'canary')
+        self.assertIn('created_at', body)
+        self.assertEqual(body['deployment_type'], 'canary')
+        self.assertIn('application_version', body)
+        self.assertIn('pod', body)
+
+    @override_settings(DEPLOYMENT_VARIABLE='backend-deployment-7f9c')
+    def test_create_reports_normal_tier(self):
+        response = self.client.post('/deploy/create', {'name': 'normal'}, format='json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()['name'], 'normal')
+        self.assertEqual(response.json()['deployment_type'], 'normal')
