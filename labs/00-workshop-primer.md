@@ -4,7 +4,7 @@ Two Harness navigation patterns come up in every lab. Skim them now so the labs 
 
 ## Finding your project
 
-1. From the left-hand side menu, click on **Account**
+1. From the left-hand side menu, click **Account**
 2. From the top navigation bar, select **Projects**
 3. Click the desired project; everything will be scoped to that project
 
@@ -14,7 +14,7 @@ Two Harness navigation patterns come up in every lab. Skim them now so the labs 
 
 You will switch between modules several times during the workshop - CI/CD, Database DevOps and AI Agents.
 
-1. Click on the **nine dot** menu icon
+1. Click the **nine-dot** menu icon
 2. Select the module relevant to the step
 
 <img width="362" height="193" alt="Switch modules" src="../images/primer-switch-module.png" />
@@ -28,7 +28,7 @@ The labs were written against a reference workshop environment. The values below
 | Value shown in labs | Used in | What it must be | Preflight check |
 | --- | --- | --- | --- |
 | `harness-devsecops` | Labs 1, 3 | The Git repository holding the sample application (this repo's `frontend-app/`, `backend/`, `harness-deploy/`, `automation/`, `python-tests/`) | Open the Code Repository module: the repo exists and contains those folders. If yours has a different name, use it in Lab 1 Step 2 and Lab 3 Step 2 |
-| `<project_id>-workshop` HAR registry | Labs 1, 3 | A project-scoped Docker **Harness Artifact Registry** named after your project identifier, e.g. `cut1hws274-workshop` (registry names must be unique across the account) | Artifact Registries lists `<project_id>-workshop`; your project identifier is in **Project Settings** and the URL; Lab 1 pushes image `harness-workshop` into it. Organisers pre-create this per project - see [`reference/ORGANISER-SETUP.md`](../reference/ORGANISER-SETUP.md) |
+| `<project_id>-workshop` HAR registry | Labs 1, 3 | A project-scoped Docker **Harness Artifact Registry** named after your project identifier, e.g. `cut1hws274-workshop` (registry names must be unique across the account) | Artifact Registries lists `<project_id>-workshop`; your project identifier is in **Project Settings** and the URL; Lab 1 pushes image `harness-workshop` into it. Organizers pre-create this per project - see [`reference/ORGANIZER-SETUP.md`](../reference/ORGANIZER-SETUP.md) |
 | `harness-workshop` image | Labs 1, 3 | Image repository name inside the HAR registry | Same string in Lab 1 (Image Name) and Lab 3 (Image Path) |
 | `username` pipeline / project variable | Labs 1, 3, 6 | Used in image tags and the smoke-test hostname (`<+variable.username>-<+pipeline.sequenceId>`) | Project variable `username` usually already exists in the event setup; otherwise add it. Tag expression must match in Labs 1 and 3 |
 | `prod` environment, `k8s` infrastructure | Labs 3-5 | The deployment target for the sample application | Project Settings > Environments shows `prod` with the `k8s` infrastructure definition |

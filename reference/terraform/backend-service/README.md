@@ -1,10 +1,10 @@
 # Backend service post-provisioning (Terraform)
 
-Points the existing **backend** service in each attendee project in org `event_hws274` at the organiser-built image `workshop-shared/harness-workshop-backend:<backend_tag>`. This is the same idea as the ServiceNow post-provisioning: apply it **after** the org's provisioning Terraform has created the projects and services. The service YAML matches [`../../services/backend.yaml`](../../services/backend.yaml).
+Points the existing **backend** service in each attendee project in org `event_hws274` at the organizer-built image `workshop-shared/harness-workshop-backend:<backend_tag>`. This is the same idea as the ServiceNow post-provisioning: apply it **after** the org's provisioning Terraform has created the projects and services. The service YAML matches [`../../services/backend.yaml`](../../services/backend.yaml).
 
 Before you run it:
 
-1. The backend image has been pushed (ORGANISER-SETUP.md §1b)
+1. The backend image has been pushed (ORGANIZER-SETUP.md §1b)
 2. Your API key can edit services in all 10 projects
 
 ## Run
@@ -35,7 +35,7 @@ Never run `terraform destroy` here. It would delete the attendees' backend servi
 
 ## Rebuilds
 
-When the organisers push a new backend tag, only bump the tag and re-apply:
+When the organizers push a new backend tag, only bump the tag and re-apply:
 
 ```bash
 terraform apply -var backend_tag=1.2.0

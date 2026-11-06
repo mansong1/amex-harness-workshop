@@ -25,7 +25,7 @@ In this lab, the user creates an advanced policy that blocks deployments when cr
 | Name | <pre>`Runtime OWASP CVEs`</pre>||
 
 5. Click **Apply**
-6. Set the REGO policy to the following and click **Save**
+6. Set the Rego policy to the following and click **Save**
 
 ```opa
 package pipeline_environment

@@ -5,7 +5,7 @@ Run once per event organization as an organizer, after the organization and atte
 ## Run at workshop start
 
 1. Apply this module to create the registry and reader access.
-2. Build and push a versioned backend image with [`../../backend-image-pipeline.yaml`](../../backend-image-pipeline.yaml) or Docker CLI ([organizer setup](../../ORGANISER-SETUP.md#build-and-push-pick-one)). The organizer/build identity needs existing registry **Upload** access; the reader role deliberately does not grant it.
+2. Build and push a versioned backend image with [`../../backend-image-pipeline.yaml`](../../backend-image-pipeline.yaml) or Docker CLI ([organizer setup](../../ORGANIZER-SETUP.md#build-and-push-pick-one)). The organizer/build identity needs existing registry **Upload** access; the reader role deliberately does not grant it.
 3. After project provisioning, apply [`../backend-service/`](../backend-service/) with the same registry identifier and image tag. Read its state-ownership warning first.
 
 ```bash
