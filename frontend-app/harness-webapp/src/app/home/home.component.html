@@ -1,135 +1,121 @@
+<div class="smoke-slot" [class.smoke-slot--failing]="ordersDegraded" [class.smoke-slot--ok]="ordersChecked && !ordersDegraded"
+     [attr.role]="ordersDegraded ? 'alert' : null">
+  @if (ordersDegraded) {
+    <svg class="smoke-slot__icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="currentColor" d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+    </svg>
+    <span><strong>Smoke test failed:</strong> Orders service unavailable. Harness is rolling back to the stable build.</span>
+  } @else if (ordersChecked) {
+    <img class="smoke-slot__mascot" src="assets/captain-canary.png" alt="" />
+    <span>Smoke test passing · Orders service OK</span>
+  } @else {
+    <span>Checking smoke test…</span>
+  }
+</div>
 
+<div class="release-bar" [class.release-bar--canary]="isCanary" [class.release-bar--stable]="!isCanary">
+  <div class="release-bar__inner">
+    <span class="release-bar__label">{{ isCanary ? 'CANARY' : 'STABLE' }} · {{ buildName }}</span>
+    <span class="state-chip state-chip--{{ healthLevel }}">{{ releaseState }}</span>
+    @if (executionUrl) {
+      <a class="release-bar__exec" [href]="executionUrl" target="_blank" rel="noopener">{{ executionLabel }} ↗</a>
+    } @else {
+      <span class="release-bar__exec">{{ executionLabel }}</span>
+    }
+    <span class="release-bar__actions">
+      <button type="button" class="btn btn-bar" (click)="checkRelase()">Check Release</button>
+      <button type="button" class="btn btn-bar" (click)="distribution()">Start Distribution Test</button>
+    </span>
+  </div>
+</div>
 
-<div class="container" style="background-color: black; width:100%">
-	<div class="row">
-  
-		<div class="col">
-			<div class="weather-card one" style="background-color:black">
-				<div class="top">
-          @if(checkValue()){
-            <div class="wrapper"  style=" background: linear-gradient(to bottom, black, rgba(0, 128, 0, 0.247) 50%, black);height: 600px; ">
-              <div class="mynav">
-                <a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-                <a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-              </div>
-              <h1 class="heading" style="color: rgb(255, 255, 255);">Events</h1>
+<div class="dashboard">
+  <header class="dashboard__header">
+    <h1>{{ greeting }}, {{ firstName }}</h1>
+    <p class="subtitle">Your card at a glance. <span class="sample">Sample data, fictional bank.</span></p>
+  </header>
 
-              
-
-              <div style="margin-top:10%">
-                <p style="color:white">
-                  Discover DevOps innovations with Harness at worldwide events, reshaping the future of modern software delivery.
-                </p>
-
-              </div>
-    
-
-            </div>
-
-
-          }
-         
-
-         @if(isCanary){
-              <div class="wrapper"  style="background: url('../../assets/canary-standing.png');height: 600px; ">
-                <div class="mynav">
-                  <a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-                  <a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-                </div>
-                <h1 class="heading" style="color: rgb(28, 198, 28);">{{serviceName}}</h1>
-                <div class="weather-card" style="background-color: rgba(58, 133, 218, 0.758); margin-top:200px; height: 100px;
-                width: 350px;">
-                              <h1 class="heading" style="font-size: 20px;color: rgb(28, 198, 28);">Version</h1>
-                              <h3 class="location" style="font-size: 16px;">{{applicationVersion}}</h3>
-
-                </div>
-
-                <div class="weather-card" style="background-color:  rgba(58, 133, 218, 0.758);  height: 100px;
-                width: 350px;">
-                              <h1 class="heading" style="font-size: 20px;color: rgb(28, 198, 28);">Last Execution</h1>
-                              <h3 class="location" style="font-size: 16px;">{{lastExecution}}</h3>
-
-                </div>
-
-
-              </div>
-
-
-            }
-          @else {
-              <div class="wrapper"   style=" background: linear-gradient(to bottom, black, rgba(0, 34, 128, 0.598) 50%, black);height: 600px; ">
-
-
-                  <div class="mynav">
-                    <a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-                    <a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-                  </div>
-                  <h1 class="heading" style="color: #FFFFFF">{{serviceName}}</h1>
-  
-                  <div class="weather-card" style="background-color: #ffffff20;   height: 100px;
-                  width: 350px;">
-                                <h1 class="heading" style="font-size: 20px;color: #FFFFFF">Version</h1>
-                                <h3 class="location" style="font-size: 16px;">{{applicationVersion}}</h3>
-  
-                  </div>
-  
-                  <div class="weather-card" style="background-color:  #ffffff20;  height: 100px;
-                  width: 350px;">
-                                <h1 class="heading" style="font-size: 20px;color:#FFFFFF ">Last Execution</h1>
-                                <h3 class="location" style="font-size: 16px;">{{lastExecution}}</h3>
-  
-                  </div>
-  
-       
-
-              </div>
-
-
-
-            }
-
-          </div>
-          @if  (!checkValue()) {
-            <div class="bottom" >
-              <button type="button" class="btn btn-success" style="width:90%;margin:5%" (click)="checkRelase()">Check Release</button>
-            </div>
-          }
-          @else {
-
-            <div class="bottom" >
-              <a href="https://www.harness.io/events"  class="btn btn-success" style="width:90%;margin:5%">Learn more</a>
-             
-            </div>
-          }
-
-
+  <div class="dashboard__grid">
+    <div class="col">
+      <section class="card card--plastic" [class.card--canary]="isCanary">
+        <div class="card__top">
+          <div class="card__chip"></div>
+          <div class="card__brand">MEMBER</div>
         </div>
+        <div class="card__number">•••• •••• •••• {{ member?.card_last4 || '1005' }}</div>
+        <div class="card__name">{{ memberName }}</div>
+      </section>
 
-		</div>
+      <section class="panel">
+        <dl class="money">
+          <div>
+            <dt>Current balance</dt>
+            <dd class="money__big">{{ account.balance | currency:'USD' }}</dd>
+          </div>
+          <div>
+            <dt>Available credit</dt>
+            <dd class="money__big">{{ availableCredit | currency:'USD' }}</dd>
+          </div>
+        </dl>
+        <p class="due">Minimum {{ account.minimumDue | currency:'USD':'symbol':'1.0-0' }} due {{ account.dueDate | date:'MMM d' }} · Limit {{ account.creditLimit | currency:'USD':'symbol':'1.0-0' }}</p>
+        <button type="button" class="btn btn-primary" (click)="pay()">Pay</button>
+        @if (payNote) {
+          <p class="hint">This is a demo app: no payment is made.</p>
+        }
+      </section>
+    </div>
 
-		<div class="col">
-			<div class="weather-card rain" style="background-color: black;">
+    <section class="panel">
+      <h2>Recent transactions</h2>
+      <ul class="list">
+        @for (t of account.transactions; track t.date + t.merchant) {
+          <li>
+            <span>
+              <span class="list__title">{{ t.merchant }}</span>
+              <span class="list__meta">{{ t.date | date:'MMM d' }} · {{ t.category }}</span>
+            </span>
+            <span class="list__amount">{{ t.amount | currency:'USD' }}</span>
+          </li>
+        }
+      </ul>
+    </section>
 
-				<div class="top">
-					<div class="wrapper">
-						<div class="mynav">
-							<a href="javascript:;"><span class="lnr lnr-chevron-left"></span></a>
-							<a href="javascript:;"><span class="lnr lnr-cog"></span></a>
-						</div>
-						<h1 class="heading">Distribution Test</h1>
-						<h3 class="location">Synthetic Test</h3>
-						<p class="temp">
+    <div class="col">
+      <section class="panel">
+        <h2>Rewards</h2>
+        @if (hasRewardsTier) {
+          <p class="rewards">
+            <span class="tier-chip">{{ member.rewards_tier }}</span>
+            <span class="new-tag" title="Added by the DB3 schema change (rewards_tier column), not by the app image">New with DB update</span>
+          </p>
+        } @else {
+          <p class="hint">Your rewards tier appears after the DB3 schema change adds <code>rewards_tier</code>.</p>
+        }
+        <p class="points">{{ account.points | number }} <span>points</span></p>
+      </section>
 
-						</p>
-					</div>
-				</div>
-				<div class="bottom">
-				<button type="button" class="btn btn-success" style="width:90%;margin:5%" (click)="distribution()" >Start</button>
-
-				</div>
-			</div>
-		</div>
-
-
-	</div>
+      <section class="panel" [class.panel--error]="ordersDegraded">
+        <h2>Recent orders</h2>
+        @if (ordersDegraded) {
+          <p class="orders-error" role="alert">We can't load your orders right now ({{ ordersError }}).</p>
+        } @else if (!ordersChecked) {
+          <p class="hint">Loading orders…</p>
+        } @else if (!orders.length) {
+          <p class="hint">No recent orders.</p>
+        } @else {
+          <ul class="list">
+            @for (o of orders; track o.id) {
+              <li>
+                <span>
+                  <span class="list__title">{{ o.item }}</span>
+                  <span class="list__meta">{{ o.merchant }} · {{ o.status }}</span>
+                </span>
+                <span class="list__amount">{{ o.amount | currency:'USD' }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  </div>
 </div>

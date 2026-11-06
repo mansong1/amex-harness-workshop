@@ -1,0 +1,37 @@
+.amex-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--hx-text);
+  font-family: var(--hx-font);
+}
+
+.app-main {
+  flex: 1;
+}
+
+.app-footer {
+  border-top: 1px solid var(--hx-border);
+  color: var(--hx-text-2);
+  font-size: 1rem;
+}
+
+.app-footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.app-footer__mascot {
+  height: 36px;
+  width: auto;
+}
+
+.app-footer a {
+  color: var(--hx-blue);
+  text-decoration: underline;
+}

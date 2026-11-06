@@ -3,6 +3,7 @@ import os
 from deploy.models import RequestEntry
 DEPLOYMENT = os.getenv('DEPLOYMENT_STATE=')
 from datetime import datetime
+import time
 
 class EpochTimeField(serializers.Field):
     def to_representation(self, value):

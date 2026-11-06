@@ -74,6 +74,22 @@ export class ApiserviceService {
     )
   }
 
+  getHealth(){
+    return this.http.get<any>(
+      this.APIUrl+'/health',this.httpOptions
+    )
+  }
 
+  getOrders(){
+    return this.http.get<any>(
+      this.APIUrl+'/api/orders',this.httpOptions
+    )
+  }
+
+  getMember(){
+    return this.http.get<any>(
+      this.APIUrl+'/deploy/member',this.httpOptions
+    )
+  }
 
 }
