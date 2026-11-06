@@ -44,7 +44,7 @@ pipeline:
                   identifier: push_backend_har
                   spec:
                     # HAR: registryRef, not connectorRef. Account-level registry.
-                    registryRef: workshop-shared
+                    registryRef: account.workshop-shared
                     repo: harness-workshop-backend
                     tags:
                       - <+pipeline.variables.backend_tag>

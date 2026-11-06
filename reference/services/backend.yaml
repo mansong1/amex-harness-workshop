@@ -36,7 +36,7 @@ service:
             - identifier: backend
               type: Har
               spec:
-                registryRef: workshop-shared
+                registryRef: account.workshop-shared
                 type: docker
                 spec:
                   imagePath: harness-workshop-backend

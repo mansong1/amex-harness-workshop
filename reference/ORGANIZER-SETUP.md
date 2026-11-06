@@ -33,7 +33,9 @@ The backend is **not** built by attendees: the workshop CI only builds the front
 | Registry | `workshop-shared` (Docker, **account** scope) |
 | Image | `harness-workshop-backend` |
 | Tag | Version, for example `1.1.0` (bump on every rebuild; don't rely on `latest`) |
-| Used by | Backend services set by provisioning Terraform: `registryRef: workshop-shared`, `imagePath: harness-workshop-backend`, `tag` from `backend_image_tag` (also `backend_registry_ref` / `backend_image_path`) |
+| Used by | Backend services set by provisioning Terraform: `registryRef: account.workshop-shared`, `imagePath: harness-workshop-backend`, `tag` from `backend_image_tag` (also `backend_registry_ref` / `backend_image_path`) |
+
+From a project, an account-level registry must be referenced with the `account.` prefix: `registryRef: account.workshop-shared`. A bare `workshop-shared` is looked up in the project and fails with "Invalid format of YAML payload: HTTP Error Status (400 - Invalid Format)".
 
 ### Create the registry and RBAC (one-time account Terraform)
 
