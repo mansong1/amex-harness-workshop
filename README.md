@@ -48,7 +48,7 @@ One journey in three parts on a **single `workshop` pipeline**. Within each part
 Your Harness project already contains everything the labs reference:
 
 - The **workshop code repository** (`harness-devsecops`) with the sample application - this repo mirrors that application under `frontend-app/`, `backend/`, `harness-deploy/` and `automation/`
-- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** cluster for Database DevOps steps, and a project **Harness Artifact Registry** Docker registry named **`workshop`** (see [`reference/ORGANISER-SETUP.md`](reference/ORGANISER-SETUP.md))
+- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** cluster for Database DevOps steps, and a project **Harness Artifact Registry** Docker registry named **`<project_id>-workshop`** (e.g. `cut1hws274-workshop`) (see [`reference/ORGANISER-SETUP.md`](reference/ORGANISER-SETUP.md))
 - Pipeline templates: **Compile Application**, **DevX Fortify Scan**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
 - The **Approval Required**, **Production Guardrail** and **Change Verified** policies and policy sets
 - The **Failure Analyst** Worker Agent, using the Harness-managed `account.harnessAnthropic` model connector, and the project-level `servicenow` ServiceNow connector

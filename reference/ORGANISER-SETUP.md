@@ -2,24 +2,23 @@
 
 Do this **once per attendee project** (or in the project template) before Lab 1. Attendees should not create registries during the session.
 
-## 1. Harness Artifact Registry (replaces Docker Hub)
+## 1. Harness Artifact Registry per project (frontend)
 
-1. In each project: **Artifact Registries** → **New Artifact Registry**
-2. Create a **Docker** registry:
+HAR registry names must be unique across the whole account, whatever their scope ([HAR best practices](https://developer.harness.io/artifact-registry/troubleshooting-and-resources/ar-best-practices)), so each project's registry is named after the project: **`<project_id>-workshop`**.
+
+1. In each of the 10 projects: **Artifact Registries** → **New Artifact Registry** → **Docker**
 
    | Field | Value |
    | --- | --- |
-   | Name | `workshop` |
-   | Identifier | `workshop` |
+   | Name / Identifier | `<project_id>-workshop`, e.g. `cut1hws274-workshop` |
    | Format | Docker |
+   | Upstream proxy | Off |
 
-3. Confirm the pipeline Build step can list it (Registry Type = **Harness Artifact Registry**, Registry = `workshop`, Image / repo = `harness-workshop`).
-4. Confirm CD services can use artifact source type **Artifact Registry** / `Har` with the same `registryRef: workshop` and `imagePath: harness-workshop`.
-5. Remove attendee dependency on the personal Docker Hub repo `nikpap/harness-workshop` and on the `dockerhub` connector for this workshop (the connector may remain for other labs; Lab 1/3 no longer use it).
+2. Confirm the pipeline Build step can list it (Registry Type = **Harness Artifact Registry**, Registry = `<project_id>-workshop`, Image / repo = `harness-workshop`).
+3. Confirm CD services can use artifact source type **Artifact Registry** / `Har` with the same registry and `imagePath: harness-workshop`.
+4. Remove attendee dependency on the personal Docker Hub repo `nikpap/harness-workshop` and on the `dockerhub` connector for this workshop (the connector may remain for other labs; Lab 1/3 no longer use it).
 
-If HAR is licensed only at account/org scope, create one Docker registry per project still (identifier `workshop`) so the lab tables stay identical across the ten projects.
-
-> **Check registry names before the event.** Harness requires HAR registry names to be unique across the whole account, whatever their scope ([HAR best practices](https://developer.harness.io/artifact-registry/troubleshooting-and-resources/ar-best-practices)). So ten project registries can't all be called `workshop`. Confirm in the event account, and if it's enforced, either give each project its own name (for example `<project_id>-workshop`, and change `registryRef` in Lab 1/3 and `services/frontend.yaml`) or push frontends to one org registry too.
+Reference YAML writes the registry as `registryRef: <+project.identifier>-workshop`. If the event account rejects an expression there, replace it with the literal name per project (or set it in the project template).
 
 ## 1b. Shared backend image (org scope, once per event org)
 
@@ -100,7 +99,7 @@ If **frontend** / **backend** services are pre-seeded in the project template, s
 | Field | frontend | backend |
 | --- | --- | --- |
 | Type | Harness Artifact Registry (`Har`) | Harness Artifact Registry (`Har`) |
-| Registry | `workshop` (project) | `workshop-shared` (org, section 1b) |
+| Registry | `<project_id>-workshop` (project) | `workshop-shared` (org, section 1b) |
 | Image path | `harness-workshop` | `harness-workshop-backend` |
 | Tag | `<+variable.username>-<+pipeline.sequenceId>` | organiser version, e.g. `1.1.0` |
 

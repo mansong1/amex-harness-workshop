@@ -81,7 +81,7 @@ Navigate to the **Execution** tab and add the following steps:
 | ---------- | ----------------------  | ----- |
 | Name | <pre>`Push to HAR`</pre>||
 | Registry Type | Harness Artifact Registry | Leave the default (do **not** switch to Third-Party / Docker Hub) |
-| Registry | <pre>`workshop`</pre> | Pre-provisioned Docker HAR registry in your project (organiser setup). No Docker connector needed |
+| Registry | <pre>`<project_id>-workshop`</pre> | Your project's pre-provisioned Docker HAR registry, named after your project identifier, e.g. `cut1hws274-workshop` (registry names are unique across the account). Pick it from the list. No Docker connector needed |
 | Image Name / Repository | <pre>`harness-workshop`</pre> | Image repository inside the HAR registry |
 | Tags | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| Click **+ Add** to add a tag row, then click the pin on that row, select **Expression** and paste the value |
 | **Optional Configuration** |||
@@ -90,7 +90,7 @@ Navigate to the **Execution** tab and add the following steps:
 
 3. Click **Apply Changes**
 
-> YAML shape (for catch-up): `type: BuildAndPushDockerRegistry` with `spec.registryRef: workshop` and `spec.repo: harness-workshop` — use **`registryRef`**, not `connectorRef`. Full pipeline: [`reference/workshop-pipeline.yaml`](../reference/workshop-pipeline.yaml).
+> YAML shape (for catch-up): `type: BuildAndPushDockerRegistry` with `spec.registryRef: <+project.identifier>-workshop` (or the literal name, e.g. `cut1hws274-workshop`) and `spec.repo: harness-workshop` — use **`registryRef`**, not `connectorRef`. Full pipeline: [`reference/workshop-pipeline.yaml`](../reference/workshop-pipeline.yaml).
 
 ---
 

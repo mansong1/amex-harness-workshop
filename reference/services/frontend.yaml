@@ -1,5 +1,7 @@
 # Reference frontend service using Harness Artifact Registry (HAR).
-# Replace projectIdentifier / orgIdentifier / registryRef to match the attendee project.
+# Replace projectIdentifier / orgIdentifier to match the attendee project.
+# registryRef is the per-project registry <project_id>-workshop; if the expression
+# is rejected, use the literal name, e.g. cut1hws274-workshop.
 
 service:
   name: frontend
@@ -33,7 +35,7 @@ service:
             - identifier: frontend
               type: Har
               spec:
-                registryRef: workshop
+                registryRef: <+project.identifier>-workshop
                 type: docker
                 spec:
                   imagePath: harness-workshop
