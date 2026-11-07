@@ -187,9 +187,9 @@ class MemberProfile(APIView):
         demo_tier = os.getenv('DEMO_REWARDS_TIER', '').strip()
         member = {
             "id": 1,
-            "first_name": "Alex",
-            "last_name": "Member",
-            "email": "alex.member@example.com",
+            "first_name": "Captain",
+            "last_name": "Canary",
+            "email": "captain.canary@example.com",
             "card_last4": "1005",
         }
 
