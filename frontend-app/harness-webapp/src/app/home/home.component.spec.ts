@@ -13,7 +13,7 @@ function setup(opts: { canary: boolean; ordersFail: boolean; details?: any }) {
   };
   const api = {
     getDetails: () => of(details),
-    getMember: () => of({ first_name: 'Alex', last_name: 'Member', email: 'alex.member@example.com', rewards_tier: 'Platinum' }),
+    getMember: () => of({ first_name: 'Captain', last_name: 'Canary', email: 'captain.canary@example.com', rewards_tier: 'Platinum' }),
     getHealth: () => of({ status: 'ok' }),
     getOrders: () => (opts.ordersFail ? throwError(() => ({ status: 500 }))
       : of({ status: 'ok', orders: [{ id: 'ORD-1', item: 'Trail running shoes', merchant: 'Northwind', status: 'Shipped', amount: 129 }] })),

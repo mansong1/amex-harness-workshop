@@ -67,14 +67,14 @@ export class HomeComponent {
   }
 
   get firstName(): string {
-    return this.member?.first_name || 'Alex';
+    return this.member?.first_name || 'Captain';
   }
 
   get memberName(): string {
     if (!this.member) {
-      return 'Alex Member';
+      return 'Captain Canary';
     }
-    return `${this.member.first_name || ''} ${this.member.last_name || ''}`.trim() || 'Alex Member';
+    return `${this.member.first_name || ''} ${this.member.last_name || ''}`.trim() || 'Captain Canary';
   }
 
   get hasRewardsTier(): boolean {
