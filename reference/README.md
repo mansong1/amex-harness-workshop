@@ -5,7 +5,7 @@ Catch-up artifacts for the **single `workshop` pipeline** design:
 | File | Purpose |
 | --- | --- |
 | [`workshop-pipeline.yaml`](workshop-pipeline.yaml) | Build (HAR) → frontend → backend (DB3 apply + canary + `/health` smoke test) |
-| [`services/frontend.yaml`](services/frontend.yaml) | Frontend service with HAR artifact source in the org `<org_id>-workshop` registry |
+| [`services/frontend.yaml`](services/frontend.yaml) | Frontend service with HAR artifact source in the project `<project_id>-workshop` registry |
 | [`services/backend.yaml`](services/backend.yaml) | Backend service using the organizer-built image in the account-level `workshop-shared` HAR registry |
 | [`backend-image-pipeline.yaml`](backend-image-pipeline.yaml) | One-off organizer pipeline that builds `backend/Dockerfile` and pushes it to `workshop-shared` |
 | [`terraform/backend-service/`](terraform/backend-service/) | Superseded: provisioning Terraform now sets the backend artifact; kept for reference |

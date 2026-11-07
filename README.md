@@ -48,7 +48,7 @@ One journey in three parts on a **single `workshop` pipeline**. Within each part
 Your Harness project already contains everything the labs reference:
 
 - The **workshop code repository** (`harness-devsecops`) with the sample application - this repo mirrors that application under `frontend-app/`, `backend/`, `harness-deploy/` and `automation/`
-- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** and **k8s-prod** clusters for containerized steps, and access to the org **Harness Artifact Registry** Docker registry named **`<org_id>-workshop`** (e.g. `event_hws274-workshop`) for frontend images (see [`reference/ORGANIZER-SETUP.md`](reference/ORGANIZER-SETUP.md)). The backend image is pulled from the account-level `workshop-shared` registry.
+- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** and **k8s-prod** clusters for containerized steps, and a project-level **Harness Artifact Registry** Docker registry named **`<project_id>-workshop`** (e.g. `cut1hws274-workshop`) for your frontend images (see [`reference/ORGANIZER-SETUP.md`](reference/ORGANIZER-SETUP.md)). The backend image is pulled from the account-level `workshop-shared` registry.
 - Pipeline templates: **Compile Application**, **Devx Fortify Scan - DAST**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
 - The **Approval Required**, **Production Guardrail** and **Change Verified** policies and policy sets
 - The **Failure Analyst** Worker Agent, using the Harness-managed `account.harnessAnthropic` model connector, and the project-level `servicenow` ServiceNow connector
@@ -69,7 +69,7 @@ Some values shown in the labs are environment-specific (the code repository name
 | [`python-tests/`](python-tests) | Unit tests run by the Test Intelligence step |
 | [`db/changelog.yaml`](db/changelog.yaml) | Starting Liquibase changelog for the Database DevOps labs |
 | [`db/examples/`](db/examples) | Full changelog files to paste when the Code editor mangles indentation |
-| [`reference/`](reference) | Catch-up pipeline and service YAML after Labs 1–9, plus organizer HAR setup (org frontend registry, account backend image) |
+| [`reference/`](reference) | Catch-up pipeline and service YAML after Labs 1–9, plus organizer HAR setup (project frontend registry, account backend image) |
 | [`images/`](images) | Screenshots and logos used by the instructions |
 
 ---

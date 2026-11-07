@@ -42,7 +42,7 @@ In this lab, the user extends the existing pipeline to take the artifact built i
 | **Add Artifact Source** |||
 | Artifact Repository Type | Artifact Registry | Harness Artifact Registry (HAR), not Docker Hub |
 | Artifact Source Identifier | <pre>`frontend`</pre>||
-| Registry | <pre>`<org_id>-workshop`</pre> | Same org HAR registry the Build stage pushed to, e.g. `event_hws274-workshop` |
+| Registry | <pre>`<project_id>-workshop`</pre> | Same project HAR registry the Build stage pushed to, e.g. `cut1hws274-workshop` |
 | Image Path | <pre>`harness-workshop`</pre>||
 | Tag | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| The field starts as `<+input>`. Click the pin, select **Expression** and paste the value |
 

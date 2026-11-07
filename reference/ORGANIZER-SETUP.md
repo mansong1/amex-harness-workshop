@@ -2,27 +2,27 @@
 
 Registries and RBAC are created by Terraform. Attendees should not create registries during the session.
 
-## 1. Org HAR registry (frontend)
+## 1. Project HAR registry (frontend)
 
-Each workshop org gets **one** Docker HAR registry for attendee frontend builds. Provisioning Terraform's registry-module creates it and the org RBAC; organizers do not create registries by hand.
+Each attendee project gets its **own** Docker HAR registry for frontend builds. Provisioning Terraform's registry-module creates it; organizers do not create registries by hand.
 
 | Item | Value |
 | --- | --- |
-| Registry | `<org_id>-workshop`, e.g. `event_hws274-workshop` (Docker, **org** scope) |
+| Registry | `<project_id>-workshop`, e.g. `cut1hws274-workshop` (Docker, **project** scope) |
 | Image | `harness-workshop` |
-| Tag | `<+variable.username>-<+pipeline.sequenceId>` (username prefix keeps attendees' tags apart) |
-| RBAC | Resource group `workshop_registry`, role `workshop_registry_user` (view / download / upload), assigned to `_organization_all_users` |
+| Tag | `<+variable.username>-<+pipeline.sequenceId>` (username prefix kept for traceability) |
+| RBAC | Project-level roles cover it; if the attendee role lacks registry permissions, Terraform adds view / download / upload on this registry for `_project_all_users` |
 
-HAR registry names must be unique across the whole account ([HAR best practices](https://developer.harness.io/artifact-registry/troubleshooting-and-resources/ar-best-practices)), which is why the registry is named after the org.
+HAR registry names must be unique across the whole account ([HAR best practices](https://developer.harness.io/artifact-registry/troubleshooting-and-resources/ar-best-practices)), which is why the registry is named after the project.
 
 Confirm after provisioning:
 
-1. Org → **Artifact Registries** lists `<org_id>-workshop`.
-2. Pipeline Build step can list it (Registry Type = **Harness Artifact Registry**, Registry = `<org_id>-workshop`, Image / repo = `harness-workshop`).
+1. Project → **Artifact Registries** lists `<project_id>-workshop`.
+2. Pipeline Build step can list it (Registry Type = **Harness Artifact Registry**, Registry = `<project_id>-workshop`, Image / repo = `harness-workshop`).
 3. CD services can use artifact source type **Artifact Registry** / `Har` with the same registry and `imagePath: harness-workshop`.
 4. Attendees no longer need the personal Docker Hub repo `nikpap/harness-workshop` or the `dockerhub` connector for this workshop (the connector may remain for other labs; Lab 1/3 no longer use it).
 
-Reference YAML writes the registry as `registryRef: <+org.identifier>-workshop`. If the event account rejects an expression there, replace it with the literal name for that org (or set it in the project template).
+Reference YAML writes the registry as `registryRef: <+project.identifier>-workshop` (project scope, so no `org.`/`account.` prefix). If the event account rejects an expression there, replace it with the literal name for that project (or set it in the project template).
 
 ## 1b. Shared backend image (account scope, once)
 
@@ -106,7 +106,7 @@ If **frontend** / **backend** services are pre-seeded in the project template, s
 | Field | frontend | backend |
 | --- | --- | --- |
 | Type | Harness Artifact Registry (`Har`) | Harness Artifact Registry (`Har`) |
-| Registry | `<org_id>-workshop` (org, section 1) | `workshop-shared` (account, section 1b) |
+| Registry | `<project_id>-workshop` (project, section 1) | `workshop-shared` (account, section 1b) |
 | Image path | `harness-workshop` | `harness-workshop-backend` |
 | Tag | `<+variable.username>-<+pipeline.sequenceId>` | organizer version, e.g. `1.1.0` |
 
