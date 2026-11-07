@@ -48,12 +48,24 @@ One journey in three parts on a **single `workshop` pipeline**. Within each part
 Your Harness project already contains everything the labs reference:
 
 - The **workshop code repository** (`harness-devsecops`) with the sample application - this repo mirrors that application under `frontend-app/`, `backend/`, `harness-deploy/` and `automation/`
-- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** and **k8s-prod** clusters for containerized steps, and a project **Harness Artifact Registry** Docker registry named **`<project_id>-workshop`** (e.g. `cut1hws274-workshop`) (see [`reference/ORGANIZER-SETUP.md`](reference/ORGANIZER-SETUP.md))
+- The **prod** environment with the **k8s** infrastructure definition, the **k8s-db** and **k8s-prod** clusters for containerized steps, and **your own** project-level **Harness Artifact Registry** for your frontend images (see [Your registry](#your-registry) below). The backend image is pulled from the shared account-level `workshop-shared` registry.
 - Pipeline templates: **Compile Application**, **Devx Fortify Scan - DAST**, **OWASP**, **SNOW Approval**, **ServiceNow Close Ticket**, **ServiceNow Close Failed**, **ServiceNow Failure Analysis**, **Canary Smoke Test** and **Change Verified**
 - The **Approval Required**, **Production Guardrail** and **Change Verified** policies and policy sets
 - The **Failure Analyst** Worker Agent, using the Harness-managed `account.harnessAnthropic` model connector, and the project-level `servicenow` ServiceNow connector
 - For the Database DevOps labs: the **DB** schema, instances **DB1** / **DB2** / **DB3** (labs apply only to **DB3**), and a `db_changes` Git repository - this repo's [`db/changelog.yaml`](db/changelog.yaml) is the starting changelog
 - The **lab_endpoint** project variable with your application's URL
+
+### Your registry
+
+Every attendee gets their own frontend registry, so the registry name in the labs is different for each person. It is your project identifier followed by `-workshop`:
+
+| | Value | Example (project `cut1hws274`) |
+| --- | --- | --- |
+| Registry | `<project_id>-workshop` | `cut1hws274-workshop` |
+| Image | `harness-workshop` | `harness-workshop` |
+| Your app URL | `https://<project_id>.static.harnessevents.com/` | `https://cut1hws274.static.harnessevents.com/` |
+
+Your project identifier is in the browser URL after `/projects/`. When a lab shows `<project_id>-workshop`, pick your own registry from the list or type your name in its place; don't copy the example. In YAML you can write `registryRef: <+project.identifier>-workshop`, which resolves to your registry automatically (project scope, so no `org.` or `account.` prefix). Only your project can see your registry, so you won't see anyone else's images. The backend image is the same for everyone and comes from `account.workshop-shared`.
 
 Some values shown in the labs are environment-specific (the code repository name, the HAR registry, the ServiceNow sandbox). Before Lab 1, run the [preflight checks](labs/00-workshop-primer.md#environment-values-and-preflight-checks) in the primer - they list every value, what it must point to, and how to verify it.
 
@@ -69,7 +81,7 @@ Some values shown in the labs are environment-specific (the code repository name
 | [`python-tests/`](python-tests) | Unit tests run by the Test Intelligence step |
 | [`db/changelog.yaml`](db/changelog.yaml) | Starting Liquibase changelog for the Database DevOps labs |
 | [`db/examples/`](db/examples) | Full changelog files to paste when the Code editor mangles indentation |
-| [`reference/`](reference) | Catch-up pipeline and service YAML after Labs 1–9, plus organizer HAR setup |
+| [`reference/`](reference) | Catch-up pipeline and service YAML after Labs 1–9, plus organizer HAR setup (project frontend registry, account backend image) |
 | [`images/`](images) | Screenshots and logos used by the instructions |
 
 ---

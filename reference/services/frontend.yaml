@@ -1,6 +1,6 @@
 # Reference frontend service using Harness Artifact Registry (HAR).
 # Replace projectIdentifier / orgIdentifier to match the attendee project.
-# registryRef is the per-project registry <project_id>-workshop; if the expression
+# registryRef is the project registry <project_id>-workshop; if the expression
 # is rejected, use the literal name, e.g. cut1hws274-workshop.
 
 service:

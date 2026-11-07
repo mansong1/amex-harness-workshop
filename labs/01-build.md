@@ -90,7 +90,7 @@ Navigate to the **Execution** tab and add the following steps:
 
 3. Click **Apply Changes**
 
-> YAML shape (for catch-up): `type: BuildAndPushDockerRegistry` with `spec.registryRef: <+project.identifier>-workshop` (or the literal name, e.g. `cut1hws274-workshop`) and `spec.repo: harness-workshop` — use **`registryRef`**, not `connectorRef`. Full pipeline: [`reference/workshop-pipeline.yaml`](../reference/workshop-pipeline.yaml).
+> YAML shape (for catch-up): `type: BuildAndPushDockerRegistry` with `spec.registryRef: <+project.identifier>-workshop` (or the literal name, e.g. `cut1hws274-workshop`; project scope, so no prefix) and `spec.repo: harness-workshop` — use **`registryRef`**, not `connectorRef`. Full pipeline: [`reference/workshop-pipeline.yaml`](../reference/workshop-pipeline.yaml).
 
 ---
 
