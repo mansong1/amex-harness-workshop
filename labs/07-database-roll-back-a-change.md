@@ -31,7 +31,7 @@ You intentionally push a breaking Liquibase changeset. Schema Apply fails on **D
 ---
 
 ### Step 2: Push a breaking change
-In **`db_changes`**, append this changeset after `add-rewards-tier-column`. Prefer pasting the full file from [`db/examples/changelog-with-breaking-change.yaml`](../db/examples/changelog-with-breaking-change.yaml) if the editor mangles indentation.
+In **`db_changes`**, append this changeset after `seed-captain-canary`. Prefer pasting the full file from [`db/examples/changelog-with-breaking-change.yaml`](../db/examples/changelog-with-breaking-change.yaml) if the editor mangles indentation.
 
 ```yaml
   - changeSet:
@@ -60,6 +60,7 @@ Commit to `main`.
 2. **Schema Apply** fails (duplicate `id` column - can you see why?)
 3. **Schema Rollback** runs because of the conditional execution
 4. Database DevOps → **Overview** shows the failed changeset on **DB3**
+5. Reload your app. The **Rewards** card has lost its Platinum chip. A failed changeset is never recorded as applied, so **Rollback Count 1** undoes the most recent *applied* one, `seed-captain-canary`, using the `rollback` block you pushed in Lab 6 (it deletes the Captain Canary row). That's why every changeset should carry a rollback you trust. Lab 9 reapplies the seed and the tier comes back
 
 > [!IMPORTANT]
 > **Clean up before Lab 8.** In Database DevOps → Overview for DB3, remove the failed `add-duplicate-column` changeset (and any drop-table attempt left from experimentation). Also delete that changeset from `changelog.yaml` in Git and commit, so the next lab starts from a clean schema. Leaving it in place clutters Overview and can confuse later runs.

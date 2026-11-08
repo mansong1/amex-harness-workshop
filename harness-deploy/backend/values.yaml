@@ -27,3 +27,15 @@ env:
     EXECUTION_URL: "<+pipeline.executionUrl>"
     SERVICE_NAME: "<+service.name>"
     APPLICATION_VERSION: "<+artifacts.primary.tag>"
+    # DB3, the Postgres instance Liquibase manages in Labs 6-9. Same host, database
+    # and user as the project's `db3` JDBC connector
+    # (jdbc:postgresql://postgres-db3.<project>.svc.cluster.local:5432/mydb).
+    # The backend only reads the `users` table; Django never migrates DB3.
+    DB_HOST: "postgres-db3.<+project.identifier>.svc.cluster.local"
+    DB_PORT: "5432"
+    DB_NAME: "mydb"
+    DB_USER: "admin"
+  # Rendered into a Kubernetes Secret at deploy time from the project's Harness
+  # secret `db3` (the same secret the db3 connector uses). Never commit a value here.
+  secrets:
+    DB_PASSWORD: '<+secrets.getValue("db3")>'

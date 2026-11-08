@@ -122,6 +122,39 @@ DATABASES = {
     }
 }
 
+
+def _db_env(name, default=''):
+    # Treat unset, blank or unresolved Harness expressions (<+...>) as "not set".
+    value = (os.getenv(name) or '').strip()
+    if not value or value.startswith('<+') or value.lower() in ('null', 'none'):
+        return default
+    return value
+
+
+# DB3: the attendee's Postgres instance that Liquibase manages in Labs 6-9.
+# The member endpoint reads the Liquibase-owned `users` table from it. Django's own
+# tables (auth, sessions, RequestEntry) stay in SQLite, and MembersDbRouter stops
+# `migrate` from ever touching this database. Without DB_HOST, the member endpoint
+# reads SQLite instead (local runs and tests).
+MEMBERS_DB_ALIAS = 'default'
+if _db_env('DB_HOST'):
+    MEMBERS_DB_ALIAS = 'members'
+    DATABASES['members'] = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': _db_env('DB_HOST'),
+        'PORT': _db_env('DB_PORT', '5432'),
+        'NAME': _db_env('DB_NAME', 'mydb'),
+        'USER': _db_env('DB_USER', 'admin'),
+        'PASSWORD': _db_env('DB_PASSWORD'),
+        # Fail fast so /deploy/member stays quick if DB3 is unreachable.
+        'OPTIONS': {'connect_timeout': int(_db_env('DB_CONNECT_TIMEOUT', '3'))},
+        'CONN_MAX_AGE': 0,
+        # `manage.py test` must never create a test database on DB3.
+        'TEST': {'MIRROR': 'default'},
+    }
+
+DATABASE_ROUTERS = ['backend.db_routers.MembersDbRouter']
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 

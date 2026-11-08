@@ -88,7 +88,7 @@ Do **not** point DB step groups at `k8s-prod` for this event: workshop-sa cannot
 Merge or mirror **`feat/amex-app-redesign`** into the attendee `harness-devsecops` repos **and rebuild the shared backend image (section 1b)** before the session so that:
 
 - Backend serves **`GET /health`** (200 + JSON status) for the Lab 6 smoke test
-- UI can show **`rewards_tier`** after the Lab 6 changeset
+- UI can show **`rewards_tier`** after the Lab 6 changesets. The backend reads `users` on DB3 directly: `harness-deploy/backend/values.yaml` points it at `postgres-db3.<project_id>.svc.cluster.local:5432/mydb` as `admin`, with the password from the project secret **`db3`** (the one the `db3` JDBC connector uses). Backend pods in `devsecops-<project_id>` must be able to reach that service; needs backend image **1.2.1** or later
 - Lab 13 can still force **`/api/orders`** → 500 for the canary smoke-test failure demo
 
 ## 4. Policy seed (optional)
