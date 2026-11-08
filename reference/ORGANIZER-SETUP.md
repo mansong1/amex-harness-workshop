@@ -32,7 +32,7 @@ The backend is **not** built by attendees: the workshop CI only builds the front
 | --- | --- |
 | Registry | `workshop-shared` (Docker, **account** scope) |
 | Image | `harness-workshop-backend` |
-| Tag | Version, for example `1.2.0` (bump on every rebuild; don't rely on `latest`) |
+| Tag | Version, for example `1.2.1` (bump on every rebuild; don't rely on `latest`) |
 | Used by | Backend services set by provisioning Terraform: `registryRef: account.workshop-shared`, `imagePath: harness-workshop-backend`, `tag` from `backend_image_tag` (also `backend_registry_ref` / `backend_image_path`) |
 
 From a project, an account-level registry must be referenced with the `account.` prefix: `registryRef: account.workshop-shared`. A bare `workshop-shared` is looked up in the project and fails with "Invalid format of YAML payload: HTTP Error Status (400 - Invalid Format)".
@@ -55,7 +55,7 @@ Organizers who push also need **Upload** on that registry.
 **B. Docker CLI from a laptop.** In the registry, open **Setup Client** and copy the exact login command and registry URL it shows. For Harness SaaS the image path is `pkg.harness.io/<account_id_lowercase>/workshop-shared/harness-workshop-backend:<tag>`, and the password is a Harness personal access token.
 
 ```bash
-TAG=1.2.0
+TAG=1.2.1
 IMAGE=pkg.harness.io/<account_id_lowercase>/workshop-shared/harness-workshop-backend:$TAG
 docker login pkg.harness.io -u <your-harness-email>   # paste the PAT when prompted
 docker build --platform linux/amd64 -t "$IMAGE" backend/
@@ -88,7 +88,7 @@ Do **not** point DB step groups at `k8s-prod` for this event: workshop-sa cannot
 Merge or mirror **`feat/amex-app-redesign`** into the attendee `harness-devsecops` repos **and rebuild the shared backend image (section 1b)** before the session so that:
 
 - Backend serves **`GET /health`** (200 + JSON status) for the Lab 6 smoke test
-- UI can show **`rewards_tier`** after the Lab 6 changeset
+- UI can show **`rewards_tier`** after the Lab 6 changesets. The backend reads `users` on DB3 directly: `harness-deploy/backend/values.yaml` points it at `postgres-db3.<project_id>.svc.cluster.local:5432/mydb` as `admin`, with the password from the project secret **`db3`** (the one the `db3` JDBC connector uses). Backend pods in `devsecops-<project_id>` must be able to reach that service; needs backend image **1.2.1** or later
 - Lab 13 can still force **`/api/orders`** → 500 for the canary smoke-test failure demo
 
 ## 4. Policy seed (optional)
@@ -108,6 +108,6 @@ If **frontend** / **backend** services are pre-seeded in the project template, s
 | Type | Harness Artifact Registry (`Har`) | Harness Artifact Registry (`Har`) |
 | Registry | `<project_id>-workshop` (project, section 1) | `workshop-shared` (account, section 1b) |
 | Image path | `harness-workshop` | `harness-workshop-backend` |
-| Tag | `<+variable.username>-<+pipeline.sequenceId>` | organizer version, e.g. `1.2.0` |
+| Tag | `<+variable.username>-<+pipeline.sequenceId>` | organizer version, e.g. `1.2.1` |
 
 Lab 3 still walks attendees through creating **frontend** when it isn't pre-seeded. Lab 4 selects **backend**; that service must already point at `workshop-shared/harness-workshop-backend` (set by provisioning). Don't point it at the frontend image: that image is the Node frontend, not Django.

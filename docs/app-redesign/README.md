@@ -22,7 +22,7 @@ Nothing in the UI code has a fallback build or execution number. When a value is
 | Execution link | `execution_url` | `EXECUTION_URL` | `<+pipeline.executionUrl>` |
 | STABLE / CANARY | `deployment_type` | `HOSTNAME` (pod name) | Kubernetes; Harness canary pods are named `...-canary-...` |
 | Distribution per-response tier/build/pod | `POST /deploy/create` `deployment_type`, `application_version`, `pod` | same as above | same as above |
-| Rewards tier + "New with DB update" | `/deploy/member` `rewards_tier` | none (DB3 column; `DEMO_REWARDS_TIER` locally) | Lab 6 Liquibase change, not the image, so it shows on stable and canary alike |
+| Rewards tier + "New with DB update" | `/deploy/member` `rewards_tier` | `DB_*` (DB3 connection, from `values.yaml` and the `db3` secret); `DEMO_REWARDS_TIER` locally | Lab 6 Liquibase change, not the image, so it shows on stable and canary alike |
 | Health chip | `/health`, `/api/orders` | `SMOKE_FAIL` | not set by the pipeline (Lab 13 sets it) |
 
 The backend treats empty, `null` or unresolved `<+...>` values as unset.
@@ -33,7 +33,7 @@ The backend treats empty, `null` or unresolved `<+...>` values as unset.
 |---|---|
 | `GET /health` | Post-deploy smoke. `200` + `{ status: "ok", version, deployment_type }` (also at `/deploy/health`) |
 | `GET /api/orders` | Lab 13 Canary Smoke Test. Default `200` with three fictional sample orders; set env `SMOKE_FAIL=1` for **HTTP 500** |
-| `GET /deploy/member` | Member profile. Includes **`rewards_tier`** only after the DB3 Liquibase column exists (or `DEMO_REWARDS_TIER` for demos) |
+| `GET /deploy/member` | Member profile, read from the first row of the Liquibase `users` table on DB3 (`DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`; SQLite when `DB_HOST` is unset). Includes **`rewards_tier`** only when that column exists and has a value, i.e. after Lab 6's `add-rewards-tier-column` + `seed-captain-canary` (or `DEMO_REWARDS_TIER` for demos). `source` is `db3`, `local` or `built-in` |
 | Rollback banner | Home shows "Smoke test failed: Orders service unavailable…" and the Recent orders panel errors when `/api/orders` returns 500 |
 
 `POST /deploy/create` also returns `deployment_type`, `application_version` and `pod`, and `/deploy/execution` also returns `execution_url` and `pod` (both additive). Existing `/deploy/execution`, `/deploy/check/release`, `/deploy/create`, `/deploy/distribution`, `/deploy/distribution/bar` contracts are unchanged.

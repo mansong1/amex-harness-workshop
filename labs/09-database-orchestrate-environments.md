@@ -16,7 +16,7 @@ DB1 and DB2 remain in the project for exploration, but **this workshop does not 
 
 ### Step 1: Start from a clean changelog
 1. Open `db_changes` → `changelog.yaml`
-2. Ensure it matches [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml): `create-users-table` plus `add-rewards-tier-column` only
+2. Ensure it matches [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml): `create-users-table`, `add-rewards-tier-column` and `seed-captain-canary` only
 3. In Database DevOps → **Overview**, remove any failed Lab 7 / Lab 8 changesets still listed on **DB3**
 
 ### Step 2: Run the full workshop pipeline
@@ -24,15 +24,15 @@ DB1 and DB2 remain in the project for exploration, but **this workshop does not 
 2. Branch: `main`
 3. Approve any gates you already added in earlier labs (none required yet if you are still in Part 2)
 4. Watch the **backend** stage:
-   - **DB** step group → **Schema Apply** on DB3 (no-op if `rewards_tier` is already applied)
+   - **DB** step group → **Schema Apply** on DB3. It reapplies whatever Labs 7 and 8 rolled back (usually `seed-captain-canary`, maybe `add-rewards-tier-column`); anything already applied is skipped
    - Canary → Verify / Approval → Canary Delete
    - **Primary Deployment** → **Rolling Deployment** (stable pods move to the new build)
    - **Smoke Test** against `/health` → 200
 
 ### Step 3: Verify Overview
 1. Database DevOps → **Overview**
-2. **DB3** shows the rewards_tier changeset as applied
-3. Optionally hit the app UI and confirm the member field that reads `rewards_tier` (from the app redesign) is present
+2. **DB3** shows `add-rewards-tier-column` and `seed-captain-canary` as applied
+3. Reload your app. The **Rewards** card shows **Platinum** with the **New with DB update** tag again, read live from DB3
 
 ---
 

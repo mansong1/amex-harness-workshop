@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework import generics, status
 from django.conf import settings
-from django.db import connection
+from django.db import connections
 from deploy.models import RequestEntry
 from deploy.serializers import RequestEntrySerializerEdit,RequestEntrySerializerView
 import os
@@ -175,16 +175,51 @@ class OrdersApi(APIView):
         )
 
 
+def _read_member_row(alias):
+    """First row of the Liquibase-owned `users` table, as a dict, or None.
+
+    Tries with `rewards_tier` first (present after Lab 6), then without it (column
+    missing, e.g. before Lab 6 or after a Lab 7 rollback). Returns None when the
+    table is missing, empty, or the database is unreachable."""
+    queries = (
+        "SELECT id, first_name, last_name, email, rewards_tier FROM users ORDER BY id LIMIT 1",
+        "SELECT id, first_name, last_name, email FROM users ORDER BY id LIMIT 1",
+    )
+    try:
+        conn = connections[alias]
+    except Exception:
+        return None
+    for sql in queries:
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(sql)
+                row = cursor.fetchone()
+                columns = [col[0] for col in cursor.description]
+        except Exception:
+            # Each statement autocommits, so a failed query doesn't poison the next.
+            try:
+                conn.close()
+            except Exception:
+                pass
+            continue
+        return dict(zip(columns, row)) if row else None
+    return None
+
+
 class MemberProfile(APIView):
     """
     Member profile for the Account dashboard.
-    Includes rewards_tier only when the DB3/Liquibase column exists
-    (or DEMO_REWARDS_TIER is set for local demos). Omits the field otherwise.
+
+    Reads the first row of the `users` table that Liquibase manages on DB3 (when
+    DB_HOST is set; SQLite otherwise). Includes rewards_tier only when that column
+    exists and has a value, which is what Lab 6's changesets provide.
+    DEMO_REWARDS_TIER fills the tier for local demos when the database has none.
     """
     permission_classes = [AllowAny]
 
     def get(self, request):
         demo_tier = os.getenv('DEMO_REWARDS_TIER', '').strip()
+        alias = getattr(settings, 'MEMBERS_DB_ALIAS', 'default')
         member = {
             "id": 1,
             "first_name": "Captain",
@@ -192,48 +227,23 @@ class MemberProfile(APIView):
             "email": "captain.canary@example.com",
             "card_last4": "1005",
         }
+        source = "built-in"
 
-        # Prefer a real users row when Liquibase has created the table.
-        try:
-            with connection.cursor() as cursor:
-                try:
-                    cursor.execute(
-                        "SELECT id, first_name, last_name, email, rewards_tier "
-                        "FROM users ORDER BY id LIMIT 1"
-                    )
-                    row = cursor.fetchone()
-                    if row:
-                        member = {
-                            "id": row[0],
-                            "first_name": row[1] or member["first_name"],
-                            "last_name": row[2] or member["last_name"],
-                            "email": row[3] or member["email"],
-                            "card_last4": member["card_last4"],
-                            "rewards_tier": row[4],
-                        }
-                        return JsonResponse(member, safe=False)
-                except Exception:
-                    # Column or table missing — try without rewards_tier.
-                    try:
-                        cursor.execute(
-                            "SELECT id, first_name, last_name, email "
-                            "FROM users ORDER BY id LIMIT 1"
-                        )
-                        row = cursor.fetchone()
-                        if row:
-                            member = {
-                                "id": row[0],
-                                "first_name": row[1] or member["first_name"],
-                                "last_name": row[2] or member["last_name"],
-                                "email": row[3] or member["email"],
-                                "card_last4": member["card_last4"],
-                            }
-                    except Exception:
-                        pass
-        except Exception:
-            pass
+        row = _read_member_row(alias)
+        if row:
+            source = "db3" if alias == 'members' else "local"
+            member.update({
+                "id": row.get("id", member["id"]),
+                "first_name": row.get("first_name") or member["first_name"],
+                "last_name": row.get("last_name") or member["last_name"],
+                "email": row.get("email") or member["email"],
+            })
+            tier = (row.get("rewards_tier") or '').strip() if row.get("rewards_tier") else ''
+            if tier:
+                member["rewards_tier"] = tier
 
-        if demo_tier:
+        if demo_tier and "rewards_tier" not in member:
             member["rewards_tier"] = demo_tier
 
+        member["source"] = source
         return JsonResponse(member, safe=False)

@@ -35,3 +35,30 @@ databaseChangeLog:
                   type: varchar(50)
                   constraints:
                     nullable: true
+  - changeSet:
+      id: seed-captain-canary
+      author: harness-lab
+      comment: Sample member for the workshop app. Its rewards tier is what Lab 6 makes appear.
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: first_name
+                  value: Captain
+              - column:
+                  name: last_name
+                  value: Canary
+              - column:
+                  name: email
+                  value: captain.canary@example.com
+              - column:
+                  name: rewards_tier
+                  value: Platinum
+      rollback:
+        - delete:
+            tableName: users
+            where: id = 1

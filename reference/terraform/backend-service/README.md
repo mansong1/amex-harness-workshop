@@ -38,7 +38,7 @@ Never run `terraform destroy` here. It would delete the attendees' backend servi
 When the organizers push a new backend tag, only bump the tag and re-apply:
 
 ```bash
-terraform apply -var backend_tag=1.2.0
+terraform apply -var backend_tag=1.2.1
 ```
 
 The only change will be `tag` in each service's YAML. Also update `reference/services/backend.yaml` so the catch-up YAML matches.
