@@ -71,6 +71,8 @@ Your project has been provisioned with a **Canary Smoke Test** step template.
 
 ![Canary Smoke Test rollback](../images/lab9-rollback-run.png "Canary Smoke Test rollback")
 
+> **App rollback doesn't roll back the database.** The stage rollback only deletes the canary and restores the previous pods. DB3 keeps any schema changes from Lab 6 (the `rewards_tier` column and the Captain Canary row), so the Rewards card still shows Platinum. That's intentional: the changes only add a column and a row, so the previous app version still works with them. Database rollback is a separate step, the Schema Rollback from Lab 7, which runs only when Schema Apply fails.
+
 4. Open the change request in ServiceNow. It is **Closed** with close code **Unsuccessful**, and the **Closure Information** tab links to the failed execution
 
 > [!TIP]
