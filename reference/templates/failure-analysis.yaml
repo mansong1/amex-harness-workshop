@@ -1,0 +1,72 @@
+template:
+  name: Failure Analysis
+  identifier: Failure_Analysis
+  versionLabel: v0.1
+  type: StepGroup
+  projectIdentifier: <project_id>
+  orgIdentifier: <org_id>
+  tags: {}
+  spec:
+    stageType: Deployment
+    stepGroupInfra:
+      type: KubernetesDirect
+      spec:
+        connectorRef: k8sprod
+        namespace: devsecops-<project_id>
+    steps:
+    - step:
+        type: Agent
+        name: Failure Analyst
+        identifier: Failure_Analyst
+        spec:
+          agentName: failure_analyst
+    - step:
+        type: Run
+        name: Publish Analysis
+        identifier: Publish_Analysis
+        spec:
+          connectorRef: dockerhub_devsecops
+          image: python:3.12-alpine
+          shell: Sh
+          command: "python3 - <<'PY'\nimport json,os,pathlib,re\n\ndef clean(v):\n\
+            \    if not isinstance(v,str) or v.strip().lower() in ('', 'null', 'none',\
+            \ '<+null>') or '<+' in v: return ''\n    return re.sub(r'[^\\w .,:;()/%+=-]',\
+            \ '', ' '.join(v.split()))[:600]\n\nresult = {}\nbase=pathlib.Path('/harness/.agent/output')\n\
+            for name in ('task_output.json','agent-combined-out.txt'):\n    try: text=(base/name).read_text()[:64000]\n\
+            \    except (OSError,UnicodeError): continue\n    candidates=[text]\n\
+            \    candidates += re.findall(r'\\{[^{}]*\\}',text)\n    for s in candidates:\n\
+            \        try: obj=json.loads(s)\n        except (ValueError,TypeError):\
+            \ continue\n        if isinstance(obj,dict) and clean(obj.get('FAILURE_SUMMARY')):\n\
+            \            result=obj;break\n    if result: break\n    m=re.search(r'(?im)^\\\
+            s*(?:[-*]\\s*)?(?:\\*\\*)?FAILURE_SUMMARY(?:\\*\\*)?\\s*:\\s*(.+)$',text)\n\
+            \    c=re.search(r'(?im)FAILURE_CATEGORY[^A-Z]*(MEMORY|CPU|CRASH|ERRORS|UNKNOWN)',text)\n\
+            \    if m and clean(m.group(1)):\n        result={'FAILURE_SUMMARY':m.group(1),'FAILURE_CATEGORY':c.group(1)\
+            \ if c else 'UNKNOWN'};break\ncategory=result.get('FAILURE_CATEGORY','UNKNOWN')\n\
+            if category not in ('MEMORY','CPU','CRASH','ERRORS','UNKNOWN'):category='UNKNOWN'\n\
+            summary=clean(result.get('FAILURE_SUMMARY'))\nif not summary:\n    for\
+            \ name,label in [('SMOKE_ERROR','Canary Smoke Test'),('VERIFY_ERROR','Verify'),('SCHEMA_ERROR','Schema\
+            \ Apply')]:\n        error=clean(os.environ.get(name,''))\n        if\
+            \ error:\n            summary=clean(label+' failed: '+error+'. Agent evidence\
+            \ unavailable; inspect this step log in execution '+os.environ.get('CURRENT_EXECUTION','')+'.');break\n\
+            \    if not summary:\n        summary=clean('Backend release failed: '+(clean(os.environ.get('STAGE_ERROR',''))\
+            \ or 'failed step details unavailable')+'. Agent evidence unavailable;\
+            \ inspect backend failed step logs in execution '+os.environ.get('CURRENT_EXECUTION','')+'.')\n\
+            pathlib.Path('/harness/failure-category.txt').write_text(category)\npathlib.Path('/harness/failure-summary.txt').write_text(summary)\n\
+            PY\nexport FAILURE_CATEGORY=\"$(cat /harness/failure-category.txt)\"\n\
+            export FAILURE_SUMMARY=\"$(cat /harness/failure-summary.txt)\"\nprintf\
+            \ '%s: %s\\n' \"$FAILURE_CATEGORY\" \"$FAILURE_SUMMARY\"\n"
+          outputVariables:
+          - name: FAILURE_CATEGORY
+          - name: FAILURE_SUMMARY
+          envVariables:
+            CURRENT_EXECUTION: <+pipeline.executionId>
+            SMOKE_ERROR: <+pipeline.stages.backend.spec.execution.steps.canaryDeployment.steps.Canary_Smoke_Test.failureInfo.message>
+            VERIFY_ERROR: <+pipeline.stages.backend.spec.execution.steps.canaryDeployment.steps.Verify.failureInfo.message>
+            SCHEMA_ERROR: <+pipeline.stages.backend.spec.execution.steps.DB.steps.Schema_Apply.failureInfo.message>
+            STAGE_ERROR: <+pipeline.stages.backend.failureInfo.message>
+    failureStrategies:
+    - onFailure:
+        errors:
+        - AllErrors
+        action:
+          type: Ignore

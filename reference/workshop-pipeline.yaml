@@ -174,19 +174,6 @@ pipeline:
                         when:
                           stageStatus: Success
                         failureStrategies: []
-                    - step:
-                        type: DBSchemaRollback
-                        name: Schema Rollback
-                        identifier: Schema_Rollback
-                        spec:
-                          connectorRef: account.harnessImage
-                          migrationType: Liquibase
-                          dbSchema: DB
-                          dbInstance: DB3
-                          changeSetCount: 1
-                        timeout: 10m
-                        when:
-                          stageStatus: Failure
                   stepGroupInfra:
                     type: KubernetesDirect
                     spec:
@@ -279,6 +266,29 @@ pipeline:
                         action:
                           type: StageRollback
             rollbackSteps:
+              # Lab 7: Schema Apply failing triggers StageRollback, so the DB rollback lives here.
+              - stepGroup:
+                  name: DB Rollback
+                  identifier: DB_Rollback
+                  when:
+                    stageStatus: Failure
+                    condition: <+pipeline.stages.backend.spec.execution.steps.DB.steps.Schema_Apply.status> == "FAILED"
+                  steps:
+                    - step:
+                        type: DBSchemaRollback
+                        name: Schema Rollback
+                        identifier: Schema_Rollback
+                        spec:
+                          connectorRef: account.harnessImage
+                          migrationType: Liquibase
+                          dbSchema: DB
+                          dbInstance: DB3
+                          changeSetCount: 1
+                        timeout: 10m
+                  stepGroupInfra:
+                    type: KubernetesDirect
+                    spec:
+                      connectorRef: k8s-db
               - step:
                   name: Canary Delete
                   identifier: rollbackCanaryDelete

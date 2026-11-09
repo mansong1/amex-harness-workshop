@@ -69,6 +69,9 @@ Your project has been provisioned with a **Canary Smoke Test** step template.
 2. Once the canary is deployed, **Verify** analyzes its Prometheus metrics over a 5-minute window and passes. **Canary Smoke Test** then fails with `FAILED: the canary returned HTTP 500 from /api/orders`
 3. Harness rolls back the stage before anyone is asked to approve it: **Canary Delete**, **Rolling Rollback** and then **Close Failed Ticket**. The release never reaches the stable deployment
 
+> [!NOTE]
+> **Rolling Rollback can show SKIPPED.** The Canary Smoke Test fails before the primary rolling deployment runs, so there is no rolling deployment to undo. Canary Delete still removes the canary. This is expected, not a rollback failure.
+
 ![Canary Smoke Test rollback](../images/lab9-rollback-run.png "Canary Smoke Test rollback")
 
 > **App rollback doesn't roll back the database.** The stage rollback only deletes the canary and restores the previous pods. DB3 keeps any schema changes from Lab 6 (the `rewards_tier` column and the Captain Canary row), so the Rewards card still shows Platinum. That's intentional: the changes only add a column and a row, so the previous app version still works with them. Database rollback is a separate step, the Schema Rollback from Lab 7, which runs only when Schema Apply fails.

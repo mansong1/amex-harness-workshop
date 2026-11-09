@@ -83,7 +83,7 @@ The target infrastructure has been pre-created. The application will be deployed
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Branch Name | <pre>`main`</pre>| Usually prefilled; type `main` if empty |
 | Primary Artifact | <pre>`frontend`</pre>| Select it on the run form if it shows **- Select -** |
 
 ---

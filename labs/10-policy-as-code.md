@@ -18,14 +18,32 @@ In this lab, the user creates and applies policies as code to enable governance 
 3. Click **New Policy**
 4. Enter the policy name below and click **Apply**
 5. From the suggested list, select **Pipeline - Approval** and click **Use This Sample**. It denies any **Deployment** stage that does not contain a **Harness Approval** step
-6. Click **Save**
+6. The sample only looks at a stage's top-level steps, so it misses the backend Approval that sits inside the **Canary Deployment** step group. Replace the editor contents with this version, which looks at every depth:
+
+```opa
+package pipeline
+
+# Deny Deployment stages that have no Harness Approval step at any depth.
+deny[msg] {
+  input.pipeline.stages[i].stage.type == "Deployment"
+  not stages_with_approval[i]
+  msg := sprintf("deployment stage '%s' does not have a HarnessApproval step", [input.pipeline.stages[i].stage.name])
+}
+
+stages_with_approval[i] {
+  walk(input.pipeline.stages[i].stage.spec.execution.steps, [_, node])
+  node.type == "HarnessApproval"
+}
+```
+
+7. Click **Save**
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
 | Policy Name | <pre>`Production Approvals`</pre> ||
 
 
-7. Click **Policy Sets** and then **New Policy Set**, set the values according to the table below and click **Continue**
+8. Click **Policy Sets** and then **New Policy Set**, set the values according to the table below and click **Continue**
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
@@ -33,9 +51,9 @@ In this lab, the user creates and applies policies as code to enable governance 
 | Entity Type | Pipeline ||
 | On what event should the policy set be evaluated | On Run ||
 
-8. On **Policy evaluation criteria** click **+ Add Policy**, select **Production Approvals**, select **Error & Exit** for the failure strategy, click **Apply** and then **Continue**
-9. Skip the optional **Runtime Environment** step and click **Finish**
-10. New policy sets are not enforced by default. In the policy set list, turn on the **Enforced** toggle of **Production Policies**
+9. On **Policy evaluation criteria** click **+ Add Policy**, select **Production Approvals**, select **Error & Exit** for the failure strategy, click **Apply** and then **Continue**
+10. Skip the optional **Runtime Environment** step and click **Finish**
+11. New policy sets are not enforced by default. In the policy set list, turn on the **Enforced** toggle of **Production Policies**
 
 ---
 
@@ -53,7 +71,7 @@ In this lab, the user creates and applies policies as code to enable governance 
 | ---------- | ----------------------  | ----- |
 | Step Name | <pre>`Approval`</pre>||
 | Type of Approval | Harness Approval ||
-| User Groups | All Project Users | Open the **Project** tab to find it |
+| User Groups | All Project Users | The picker opens on **Account**; switch to the **Project** tab |
 
 > [!NOTE]
 > The step library calls this step **Harness Approval**, and the step panel calls it **Manual Approval**. They are the same step.

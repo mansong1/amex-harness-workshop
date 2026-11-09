@@ -32,3 +32,14 @@ flowchart LR
   TI --> Compile --> Fortify --> HAR --> OWASP --> Roll --> DB --> Canary --> Rolling --> Smoke
   changelog[db_changes/changelog.yaml push] -.->|trigger Update| build
 ```
+
+## Lab 14 rollback analysis
+
+These snippets are for the end of Labs 13–14, not the Labs 1–9 starting pipeline. Replace the account, organization and project placeholders before provisioning.
+
+| File | Purpose |
+| --- | --- |
+| [`agents/failure-analyst.yaml`](agents/failure-analyst.yaml) | Worker Agent prompt and structured result contract |
+| [`templates/failure-analysis.yaml`](templates/failure-analysis.yaml) | Containerized agent and robust Publish Analysis step |
+| [`templates/servicenow-failure-analysis.yaml`](templates/servicenow-failure-analysis.yaml) | ServiceNow work note using the completed publisher outputs |
+| [`lab14-rollback-steps.yaml`](lab14-rollback-steps.yaml) | Sequential rollback order; analysis must finish before its work note is recorded |
