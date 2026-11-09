@@ -13,7 +13,9 @@ In Lab 13 Harness rolled the release back and closed the change as **Unsuccessfu
 ## Walkthrough
 
 > [!IMPORTANT]
-> **Organizer setup:** before the event, grant attendees **Connector Viewer** (`core_connector_access`) on the connector the **Failure Analyst** agent template uses. Without it, the run is rejected with `Failed to expand Agent step 'Failure_Analyst' ... Missing permission core_connector_access`. Also grant **LLM Gateway Access** (`ai_llmgateway_access`) on resource type **LLM_GATEWAY** at the scope required by your model connector. Without it, Agent steps can be rejected before execution. Attendees can't fix these prerequisites themselves; the organizer must provision the scoped permissions. Do not broaden account-level RBAC as part of this lab.
+> **Organizer setup:** before the event, grant attendees read/use access (`core_connector_view` and `core_connector_access`) on the model connector the **Failure Analyst** agent template uses. Without connector access, the run is rejected with `Failed to expand Agent step 'Failure_Analyst' ... Missing permission core_connector_access`.
+>
+> **LLM gateway access:** for this workshop, assign the gateway-only account role `workshop_llm_gateway_user` (`ai_llmgateway_access` on **LLM_GATEWAY**) to each attendee **USER**, at **account scope**, using the Harness-managed `_all_account_level_resources` resource group. Use one assignment per attendee, **not All Account Users**. A project-level grant or an empty custom resource group does not authorize the account gateway check during Agent template expansion and can cause a 403 before execution. Connector access is separate. Verify with an attendee-started run before the event; these are organizer prerequisites, not attendee RBAC changes.
 
 ### Step 1: Review the Failure Analyst Agent
 Your project has been provisioned with a **Failure Analyst** Worker Agent (identifier `failure_analyst`).
