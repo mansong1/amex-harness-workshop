@@ -270,6 +270,9 @@ pipeline:
               - stepGroup:
                   name: DB Rollback
                   identifier: DB_Rollback
+                  when:
+                    stageStatus: Failure
+                    condition: <+pipeline.stages.backend.spec.execution.steps.DB.steps.Schema_Apply.status> == "FAILED"
                   steps:
                     - step:
                         type: DBSchemaRollback

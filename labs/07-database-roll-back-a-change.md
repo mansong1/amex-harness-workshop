@@ -26,7 +26,13 @@ The rollback goes in the backend stage's **rollback** steps, not next to Schema 
 | Select DB Instance | <pre>`DB3`</pre> | Same instance as Schema Apply |
 | Rollback Count | <pre>`1`</pre> | |
 
-4. **Apply Changes** and **Save**. Rollback steps only run when the stage fails, so no conditional execution is needed
+4. On the **DB Rollback** step group, open **Advanced** → **Conditional Execution**, choose to run it only if the stage execution fails and add the JEXL condition below, so the database is only rolled back when **Schema Apply** itself failed (a failed canary in Part 3 rolls back the app, not the database):
+
+```
+<+pipeline.stages.backend.spec.execution.steps.DB.steps.Schema_Apply.status> == "FAILED"
+```
+
+5. **Apply Changes** and **Save**
 
 ---
 
