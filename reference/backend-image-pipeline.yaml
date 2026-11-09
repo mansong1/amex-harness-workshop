@@ -51,3 +51,18 @@ pipeline:
                     caching: true
                     dockerfile: /harness/backend/Dockerfile
                     context: /harness/backend
+              # Event projects enforce a run-time policy (Lab 2) that requires
+              # Fortify and OWASP steps; without them the run errors with
+              # "Policy Evaluation failures" before it starts.
+              - step:
+                  name: Fortify
+                  identifier: Fortify
+                  template:
+                    templateRef: fortify
+                    versionLabel: v0.1
+              - step:
+                  name: OWASP
+                  identifier: OWASP
+                  template:
+                    templateRef: owasp
+                    versionLabel: v0.1
