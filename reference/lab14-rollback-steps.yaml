@@ -1,0 +1,65 @@
+# Merge into the backend stage spec.execution after completing Labs 13 and 14.
+rollbackSteps:
+- stepGroup:
+    name: DB Rollback
+    identifier: DB_Rollback
+    when:
+      stageStatus: Failure
+      condition: <+pipeline.stages.backend.spec.execution.steps.DB.steps.Schema_Apply.status>
+        == "FAILED"
+    steps:
+    - step:
+        type: DBSchemaRollback
+        name: Schema Rollback
+        identifier: Schema_Rollback
+        spec:
+          connectorRef: account.harnessImage
+          migrationType: Liquibase
+          dbSchema: db1
+          dbInstance: db3
+          changeSetCount: 1
+        timeout: 10m
+    stepGroupInfra:
+      type: KubernetesDirect
+      spec:
+        connectorRef: k8sdb
+- step:
+    name: Canary Delete
+    identifier: rollbackCanaryDelete
+    type: K8sCanaryDelete
+    timeout: 10m
+    spec: {}
+- step:
+    name: Rolling Rollback
+    identifier: rollingRollback
+    type: K8sRollingRollback
+    timeout: 10m
+    spec: {}
+- stepGroup:
+    name: Failure Analysis
+    identifier: Failure_Analysis
+    template:
+      templateRef: Failure_Analysis
+      versionLabel: v0.1
+- step:
+    name: Record Failure Analysis
+    identifier: Record_Failure_Analysis
+    when:
+      stageStatus: All
+    failureStrategies:
+    - onFailure:
+        errors:
+        - AllErrors
+        action:
+          type: Ignore
+    template:
+      templateRef: SNOW_Failure_Analysis
+      versionLabel: v0.1
+- step:
+    name: Close Failed Ticket
+    identifier: Close_Failed_Ticket
+    when:
+      stageStatus: All
+    template:
+      templateRef: SNOW_Close_Failed
+      versionLabel: v0.1

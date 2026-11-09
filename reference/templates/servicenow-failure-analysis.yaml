@@ -1,0 +1,19 @@
+template:
+  name: "ServiceNow Failure Analysis"
+  identifier: "SNOW_Failure_Analysis"
+  versionLabel: "v0.1"
+  type: Step
+  projectIdentifier: <project_id>
+  orgIdentifier: <org_id>
+  tags: {}
+  spec:
+    type: ServiceNowUpdate
+    timeout: 5m
+    spec:
+      connectorRef: servicenow
+      ticketType: change_request
+      useServiceNowTemplate: false
+      ticketNumber: <+pipeline.stages.ServiceNow_Approval.spec.execution.steps.Create_Ticket.ticket.ticketNumber>
+      fields:
+        - name: work_notes
+          value: "Failure Analyst (<+pipeline.stages.backend.spec.execution.rollbackSteps.Failure_Analysis.steps.Publish_Analysis.output.outputVariables.FAILURE_CATEGORY>): <+pipeline.stages.backend.spec.execution.rollbackSteps.Failure_Analysis.steps.Publish_Analysis.output.outputVariables.FAILURE_SUMMARY>"
