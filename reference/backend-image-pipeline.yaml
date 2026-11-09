@@ -20,9 +20,9 @@ pipeline:
   variables:
     - name: backend_tag
       type: String
-      description: Version tag for the backend image, e.g. 1.2.1 (never only latest)
+      description: Version tag for the backend image, e.g. 1.2.2 (never only latest)
       required: true
-      value: <+input>.default(1.2.1)
+      value: <+input>.default(1.2.2)
   stages:
     - stage:
         name: Build backend

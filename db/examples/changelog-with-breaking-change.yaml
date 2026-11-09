@@ -1,10 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: create-users-table
+      id: create-members-table
       author: harness-lab
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: members
       changes:
         - createTable:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: id
@@ -28,7 +33,7 @@ databaseChangeLog:
       author: harness-lab
       changes:
         - addColumn:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: rewards_tier
@@ -41,7 +46,7 @@ databaseChangeLog:
       comment: Sample member for the workshop app. Its rewards tier is what Lab 6 makes appear.
       changes:
         - insert:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: id
@@ -60,14 +65,14 @@ databaseChangeLog:
                   value: Platinum
       rollback:
         - delete:
-            tableName: users
+            tableName: members
             where: id = 1
   - changeSet:
       id: add-duplicate-column
       author: harness-lab
       changes:
         - addColumn:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: id

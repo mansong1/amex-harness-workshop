@@ -81,11 +81,11 @@ deny[msg] {
 
 ```yaml
   - changeSet:
-      id: drop-users-table
+      id: drop-members-table
       author: harness-lab
       changes:
         - dropTable:
-            tableName: users
+            tableName: members
 ```
 
    Or use [`db/examples/changelog-with-drop-table.yaml`](../db/examples/changelog-with-drop-table.yaml).
@@ -98,7 +98,7 @@ deny[msg] {
 - No drop reaches DB3
 - If your Lab 7 **Schema Rollback** step also runs on this failure, it rolls back one more applied changeset (for example `add-rewards-tier-column`). That's expected; Lab 9 reapplies everything still in `changelog.yaml`
 
-Remove the `drop-users-table` changeset from Git (and any failed record in Overview) before Lab 9 so the next run is clean.
+Remove the `drop-members-table` changeset from Git (and any failed record in Overview) before Lab 9 so the next run is clean.
 
 ---
 
