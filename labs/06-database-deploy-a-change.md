@@ -20,7 +20,7 @@ The teaching change adds a nullable `rewards_tier` column on `members` and seeds
 ### Step 1: Add a post-deploy smoke test
 1. Open the existing **`workshop`** pipeline in Pipeline Studio
 2. Select the **backend** stage
-3. After **Rolling Deployment** in the **Primary Deployment** step group (the last step of the backend execution, after the canary flow), click **+** and add an **HTTP** step
+3. After **Rolling Deployment** (the last step of the backend execution, after the canary flow), click **+** and add an **HTTP** step. Depending on where you hover, the step lands inside or just after the **Primary Deployment** step group; either works
 
 | Input | Value | Notes |
 | --- | --- | --- |
@@ -59,7 +59,7 @@ This is the Amex-requested post-deploy smoke test. Lab 13 later adds a separate 
 | Input | Value | Notes |
 | --- | --- | --- |
 | Name | <pre>`Schema Apply`</pre> | |
-| Container Registry | Harness Image / account default | Not covered in older guides; leave the default |
+| Container Registry | Leave the default | The UI may show it as **Harness GAR Connector** at **ACCOUNT** scope (older guides call it "Harness Image") |
 | Migration Type | Liquibase | |
 | Select DB Schema | <pre>`DB`</pre> | |
 | Database Instance | <pre>`DB3`</pre> | Production instance only - no Dev→QA→Prod promotion in this lighter workshop |
@@ -85,7 +85,8 @@ This is the Amex-requested post-deploy smoke test. Lab 13 later adds a separate 
 | Branch name(s) | Equals | <pre>`main`</pre> |
 | Changed File | Equals | <pre>`changelog.yaml`</pre> |
 
-4. Continue and **Create Trigger**
+4. Continue. If the trigger asks for **primary artifacts** for the frontend and backend services, select the existing primary artifact for each
+5. **Create Trigger**
 
 A push to `changelog.yaml` now runs the full `workshop` pipeline (build, deploy, schema apply, smoke test), not a separate DB pipeline.
 
@@ -99,6 +100,9 @@ Before this step, open your app (`https://<project_id>.static.harnessevents.com/
 
 > [!WARNING]
 > The Harness Code editor auto-indents on paste and will break YAML. Paste with **Ctrl+Shift+V** (plain text), or replace the whole file with the contents of [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml).
+
+> [!NOTE]
+> If your `changelog.yaml` has no `create-members-table` changeset (for example it only holds a `vendors` changeset), replace the whole file with [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml) instead of appending.
 
 3. Append these two changesets **after** the existing `create-members-table` entry (keep the file's existing indentation style). The first adds the column; the second inserts Captain Canary with a tier, and declares how to undo itself:
 

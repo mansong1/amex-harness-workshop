@@ -96,7 +96,7 @@ deny[msg] {
 - Schema Apply evaluates the policy during preview/validate
 - The step fails with **dropping data is not permitted**
 - No drop reaches DB3
-- If your Lab 7 **Schema Rollback** step also runs on this failure, it rolls back one more applied changeset (for example `add-rewards-tier-column`). That's expected; Lab 9 reapplies everything still in `changelog.yaml`
+- If your Lab 7 **Schema Rollback** step also runs on this failure, it rolls back one more applied changeset (for example `add-rewards-tier-column`, because the failed `drop-members-table` is never recorded). That's expected; Lab 9 reapplies everything still in `changelog.yaml`
 
 Remove the `drop-members-table` changeset from Git (and any failed record in Overview) before Lab 9 so the next run is clean.
 

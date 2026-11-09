@@ -13,9 +13,11 @@ You intentionally push a breaking Liquibase changeset. Schema Apply fails on **D
 ## Walkthrough
 
 ### Step 1: Add Schema Rollback
-1. Open the **`workshop`** pipeline → **backend** stage → **DB** step group
-2. Hover to the right of **Schema Apply** and click **➕**
-3. Select **Rollback Schema**
+The rollback goes in the backend stage's **rollback** steps, not next to Schema Apply. When Schema Apply fails, the stage's failure strategy (Rollback Stage) jumps straight to the rollback steps, so a rollback step placed in the execution after Schema Apply never runs.
+
+1. Open the **`workshop`** pipeline → **backend** stage → **Execution**, and toggle the **Rollback** view (top right)
+2. Before **Canary Delete**, click **➕** → **Add Step Group**: name `DB Rollback`, **Enable container based execution** on, Kubernetes Cluster `k8s-db`
+3. Inside **DB Rollback**, click **Add Step** → **Rollback Schema**
 
 | Input | Value | Notes |
 | --- | --- | --- |
@@ -24,9 +26,7 @@ You intentionally push a breaking Liquibase changeset. Schema Apply fails on **D
 | Select DB Instance | <pre>`DB3`</pre> | Same instance as Schema Apply |
 | Rollback Count | <pre>`1`</pre> | |
 
-4. In the step, open **Advanced** → **Conditional Execution**
-5. Choose **If the previous step fails** (stage/step status Failure)
-6. **Apply Changes** and **Save**
+4. **Apply Changes** and **Save**. Rollback steps only run when the stage fails, so no conditional execution is needed
 
 ---
 
@@ -58,7 +58,7 @@ Commit to `main`.
 ## Result
 1. The trigger starts `workshop`
 2. **Schema Apply** fails (duplicate `id` column - can you see why?)
-3. **Schema Rollback** runs because of the conditional execution
+3. The backend stage rolls back, and **Schema Rollback** runs in the rollback steps
 4. Database DevOps → **Overview** shows the failed changeset on **DB3**
 5. Reload your app. The **Rewards** card has lost its Platinum chip. A failed changeset is never recorded as applied, so **Rollback Count 1** undoes the most recent *applied* one, `seed-captain-canary`, using the `rollback` block you pushed in Lab 6 (it deletes the Captain Canary row). That's why every changeset should carry a rollback you trust. Lab 9 reapplies the seed and the tier comes back
 

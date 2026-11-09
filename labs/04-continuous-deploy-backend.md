@@ -64,7 +64,7 @@ The target infrastructure has been pre-created and was used in the previous stag
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Branch Name | <pre>`main`</pre>| Usually prefilled; type `main` if empty |
 | Primary Artifact | <pre>`backend`</pre>| Select it on the run form if it isn't already set |
 
 2. While the canary deployment is ongoing and waiting for approval, navigate to the web page and see if you can spot the canary: click **Check Release** in the release bar on Home and watch it switch between **CANARY** and **STABLE**, with the build and **Harness execution #**. The button calls the backend on a separate host, `<username>.backend.<lab_subdomain>.harnessevents.com`. If your browser shows a certificate warning for it, open that host in a new tab once and accept the warning. If the backend still can't be reached, the release bar shows **build unknown** and **Harness execution unknown**
@@ -96,7 +96,7 @@ The backend stage now runs Canary Deployment, then **Verify**, then **Approval**
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Branch Name | <pre>`main`</pre>| Usually prefilled; type `main` if empty |
 | Primary Artifact | <pre>`backend`</pre>||
 
 > [!TIP]

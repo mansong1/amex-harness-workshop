@@ -18,7 +18,7 @@ In this lab, the user sets up a CI pipeline that runs source code tests, builds 
 ![](../images/lab01-projects.png)
 
 2. From the left-hand side menu, select **Pipelines**
-3. Click **+ Create a Pipeline**, enter the following values, then click **Start**
+3. Click **Create a Pipeline**, enter the following values, then click **Start**
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
@@ -80,9 +80,9 @@ Navigate to the **Execution** tab and add the following steps:
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
 | Name | <pre>`Push to HAR`</pre>||
-| Registry Type | Harness Artifact Registry | Leave the default (do **not** switch to Third-Party / Docker Hub) |
+| Registry Type | Artifact Registry | Leave the default (do **not** switch to Third-Party / Docker Hub) |
 | Registry | <pre>`<project_id>-workshop`</pre> | Your project's pre-provisioned Docker HAR registry, named after your project identifier, e.g. `cut1hws274-workshop` (registry names are unique across the account). Pick it from the list. No Docker connector needed |
-| Image Name / Repository | <pre>`harness-workshop`</pre> | Image repository inside the HAR registry |
+| Package Name | <pre>`harness-workshop`</pre> | Image repository inside the HAR registry |
 | Tags | <pre>`<+variable.username>-<+pipeline.sequenceId>`</pre>| Click **+ Add** to add a tag row, then click the pin on that row, select **Expression** and paste the value |
 | **Optional Configuration** |||
 | Dockerfile | <pre>`/harness/frontend-app/harness-webapp/Dockerfile`</pre>| This tells Harness where the Dockerfile is for building the app |
@@ -100,9 +100,9 @@ Navigate to the **Execution** tab and add the following steps:
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Branch Name | <pre>`main`</pre>| Usually prefilled; type `main` if empty |
 
-The run form may also show an optional **Compile** input (`ssl_input`). Leave it empty.
+The run form may also show an optional **Compile** input (`ssl_input`). Leave its default (`false`).
 
 > [!WARNING]
 > Pipeline execution is rejected by the policy engine. Let's create a compliant pipeline.

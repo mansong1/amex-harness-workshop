@@ -48,7 +48,7 @@ In this lab, the security team has implemented orchestration of **Fortify** and 
 
 | Input      | Value     | Notes |
 | ---------- | ----------------------  | ----- |
-| Branch Name | <pre>`main`</pre>| Not prefilled. Type `main` |
+| Branch Name | <pre>`main`</pre>| Usually prefilled; type `main` if empty |
 
 2. After the **Build and Push** stage is complete, navigate to the **Vulnerabilities** tab (formerly **Security Tests**) to see the deduplicated, normalized, and prioritized list of vulnerabilities discovered across your scanners. The tab is available while the run is in progress, and it can show 0 for a few seconds before the results load
 
