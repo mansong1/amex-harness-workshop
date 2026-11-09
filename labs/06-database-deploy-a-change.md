@@ -9,7 +9,7 @@
 ## Overview
 Part 1 left you with a single `workshop` pipeline that builds, scans and deploys the frontend and backend. In this lab you extend that **same** pipeline so a Liquibase changelog is applied to **DB3** inside the backend stage, then a post-deploy HTTP smoke test confirms the app is healthy. There is no second "Deploy DB Schema" pipeline and no new environments or infrastructure - the ten pre-provisioned projects already have DB3 and the `k8s-db` connector.
 
-The teaching change adds a nullable `rewards_tier` column on `users` and seeds the sample member, Captain Canary, with the **Platinum** tier. The backend reads its member profile straight from the `users` table on DB3, so the tier shows up on the app's **Rewards** card as soon as the schema change lands. No new app image is needed.
+The teaching change adds a nullable `rewards_tier` column on `members` and seeds the sample member, Captain Canary, with the **Platinum** tier. The backend reads its member profile straight from the `members` table on DB3, so the tier shows up on the app's **Rewards** card as soon as the schema change lands. No new app image is needed.
 
 > Depends on the app redesign (`feat/amex-app-redesign`), which adds `GET /health` on the backend. Use that endpoint for the smoke test.
 
@@ -100,7 +100,7 @@ Before this step, open your app (`https://<project_id>.static.harnessevents.com/
 > [!WARNING]
 > The Harness Code editor auto-indents on paste and will break YAML. Paste with **Ctrl+Shift+V** (plain text), or replace the whole file with the contents of [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml).
 
-3. Append these two changesets **after** the existing `create-users-table` entry (keep the file's existing indentation style). The first adds the column; the second inserts Captain Canary with a tier, and declares how to undo itself:
+3. Append these two changesets **after** the existing `create-members-table` entry (keep the file's existing indentation style). The first adds the column; the second inserts Captain Canary with a tier, and declares how to undo itself:
 
 ```yaml
   - changeSet:
@@ -108,7 +108,7 @@ Before this step, open your app (`https://<project_id>.static.harnessevents.com/
       author: harness-lab
       changes:
         - addColumn:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: rewards_tier
@@ -121,7 +121,7 @@ Before this step, open your app (`https://<project_id>.static.harnessevents.com/
       comment: Sample member for the workshop app. Its rewards tier is what Lab 6 makes appear.
       changes:
         - insert:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: id
@@ -140,7 +140,7 @@ Before this step, open your app (`https://<project_id>.static.harnessevents.com/
                   value: Platinum
       rollback:
         - delete:
-            tableName: users
+            tableName: members
             where: id = 1
 ```
 

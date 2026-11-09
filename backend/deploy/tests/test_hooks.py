@@ -123,7 +123,7 @@ class ExecutionDetailsTests(TestCase):
 
 @override_settings(MEMBERS_DB_ALIAS='default')
 class MemberFromUsersTableTests(TestCase):
-    """The member endpoint reads the Liquibase `users` table (DB3 in the workshop;
+    """The member endpoint reads the Liquibase `members` table (DB3 in the workshop;
     the default SQLite DB here) and degrades gracefully at every Lab 6-7 stage."""
 
     def setUp(self):
@@ -140,10 +140,10 @@ class MemberFromUsersTableTests(TestCase):
         cols = "id int primary key, first_name varchar(100), last_name varchar(100), email varchar(255) not null"
         if with_tier:
             cols += ", rewards_tier varchar(50)"
-        self._sql(f"CREATE TABLE users ({cols})")
+        self._sql(f"CREATE TABLE members ({cols})")
 
     def tearDown(self):
-        self._sql("DROP TABLE IF EXISTS users")
+        self._sql("DROP TABLE IF EXISTS members")
 
     def test_no_users_table_falls_back_to_built_in_member(self):
         body = self.client.get('/deploy/member').json()
@@ -159,7 +159,7 @@ class MemberFromUsersTableTests(TestCase):
 
     def test_row_without_tier_column(self):
         self._create_users(with_tier=False)
-        self._sql("INSERT INTO users (id, first_name, last_name, email) "
+        self._sql("INSERT INTO members (id, first_name, last_name, email) "
                   "VALUES (1, 'Captain', 'Canary', 'captain.canary@example.com')")
         body = self.client.get('/deploy/member').json()
         self.assertEqual(body['source'], 'local')
@@ -168,14 +168,14 @@ class MemberFromUsersTableTests(TestCase):
 
     def test_null_tier_is_omitted(self):
         self._create_users(with_tier=True)
-        self._sql("INSERT INTO users (id, first_name, last_name, email) "
+        self._sql("INSERT INTO members (id, first_name, last_name, email) "
                   "VALUES (1, 'Captain', 'Canary', 'captain.canary@example.com')")
         body = self.client.get('/deploy/member').json()
         self.assertNotIn('rewards_tier', body)
 
     def test_lab6_seeded_row_shows_platinum(self):
         self._create_users(with_tier=True)
-        self._sql("INSERT INTO users (id, first_name, last_name, email, rewards_tier) "
+        self._sql("INSERT INTO members (id, first_name, last_name, email, rewards_tier) "
                   "VALUES (1, 'Captain', 'Canary', 'captain.canary@example.com', 'Platinum')")
         body = self.client.get('/deploy/member').json()
         self.assertEqual(body['rewards_tier'], 'Platinum')
@@ -184,7 +184,7 @@ class MemberFromUsersTableTests(TestCase):
 
     def test_db_tier_wins_over_demo_tier(self):
         self._create_users(with_tier=True)
-        self._sql("INSERT INTO users (id, first_name, last_name, email, rewards_tier) "
+        self._sql("INSERT INTO members (id, first_name, last_name, email, rewards_tier) "
                   "VALUES (1, 'Captain', 'Canary', 'c@example.com', 'Platinum')")
         os.environ['DEMO_REWARDS_TIER'] = 'Gold'
         try:

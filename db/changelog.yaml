@@ -1,10 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: create-users-table
+      id: create-members-table
       author: harness-lab
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: members
       changes:
         - createTable:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: id

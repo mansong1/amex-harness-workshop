@@ -39,7 +39,7 @@ In **`db_changes`**, append this changeset after `seed-captain-canary`. Prefer p
       author: harness-lab
       changes:
         - addColumn:
-            tableName: users
+            tableName: members
             columns:
               - column:
                   name: id

@@ -33,7 +33,7 @@ The backend treats empty, `null` or unresolved `<+...>` values as unset.
 |---|---|
 | `GET /health` | Post-deploy smoke. `200` + `{ status: "ok", version, deployment_type }` (also at `/deploy/health`) |
 | `GET /api/orders` | Lab 13 Canary Smoke Test. Default `200` with three fictional sample orders; set env `SMOKE_FAIL=1` for **HTTP 500** |
-| `GET /deploy/member` | Member profile, read from the first row of the Liquibase `users` table on DB3 (`DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`; SQLite when `DB_HOST` is unset). Includes **`rewards_tier`** only when that column exists and has a value, i.e. after Lab 6's `add-rewards-tier-column` + `seed-captain-canary` (or `DEMO_REWARDS_TIER` for demos). `source` is `db3`, `local` or `built-in` |
+| `GET /deploy/member` | Member profile, read from the first row of the Liquibase `members` table on DB3 (`DB_HOST`/`DB_PORT`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`; SQLite when `DB_HOST` is unset). Includes **`rewards_tier`** only when that column exists and has a value, i.e. after Lab 6's `add-rewards-tier-column` + `seed-captain-canary` (or `DEMO_REWARDS_TIER` for demos). `source` is `db3`, `local` or `built-in` |
 | Rollback banner | Home shows "Smoke test failed: Orders service unavailable…" and the Recent orders panel errors when `/api/orders` returns 500 |
 
 `POST /deploy/create` also returns `deployment_type`, `application_version` and `pod`, and `/deploy/execution` also returns `execution_url` and `pod` (both additive). Existing `/deploy/execution`, `/deploy/check/release`, `/deploy/create`, `/deploy/distribution`, `/deploy/distribution/bar` contracts are unchanged.

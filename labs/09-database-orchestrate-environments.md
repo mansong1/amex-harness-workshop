@@ -16,7 +16,7 @@ DB1 and DB2 remain in the project for exploration, but **this workshop does not 
 
 ### Step 1: Start from a clean changelog
 1. Open `db_changes` → `changelog.yaml`
-2. Ensure it matches [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml): `create-users-table`, `add-rewards-tier-column` and `seed-captain-canary` only
+2. Ensure it matches [`db/examples/changelog-with-rewards-tier.yaml`](../db/examples/changelog-with-rewards-tier.yaml): `create-members-table`, `add-rewards-tier-column` and `seed-captain-canary` only
 3. In Database DevOps → **Overview**, remove any failed Lab 7 / Lab 8 changesets still listed on **DB3**
 
 ### Step 2: Run the full workshop pipeline

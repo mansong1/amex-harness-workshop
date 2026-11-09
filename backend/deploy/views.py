@@ -176,14 +176,14 @@ class OrdersApi(APIView):
 
 
 def _read_member_row(alias):
-    """First row of the Liquibase-owned `users` table, as a dict, or None.
+    """First row of the Liquibase-owned `members` table, as a dict, or None.
 
     Tries with `rewards_tier` first (present after Lab 6), then without it (column
     missing, e.g. before Lab 6 or after a Lab 7 rollback). Returns None when the
     table is missing, empty, or the database is unreachable."""
     queries = (
-        "SELECT id, first_name, last_name, email, rewards_tier FROM users ORDER BY id LIMIT 1",
-        "SELECT id, first_name, last_name, email FROM users ORDER BY id LIMIT 1",
+        "SELECT id, first_name, last_name, email, rewards_tier FROM members ORDER BY id LIMIT 1",
+        "SELECT id, first_name, last_name, email FROM members ORDER BY id LIMIT 1",
     )
     try:
         conn = connections[alias]
@@ -210,7 +210,7 @@ class MemberProfile(APIView):
     """
     Member profile for the Account dashboard.
 
-    Reads the first row of the `users` table that Liquibase manages on DB3 (when
+    Reads the first row of the `members` table that Liquibase manages on DB3 (when
     DB_HOST is set; SQLite otherwise). Includes rewards_tier only when that column
     exists and has a value, which is what Lab 6's changesets provide.
     DEMO_REWARDS_TIER fills the tier for local demos when the database has none.

@@ -52,7 +52,7 @@ variable "image_path" {
 variable "backend_tag" {
   description = "Backend image tag pushed by the organisers (see ORGANISER-SETUP.md section 1b). Bump on every rebuild."
   type        = string
-  default     = "1.2.1"
+  default     = "1.2.2"
 }
 
 variable "code_connector_ref" {

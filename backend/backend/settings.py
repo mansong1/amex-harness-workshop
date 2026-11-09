@@ -132,7 +132,7 @@ def _db_env(name, default=''):
 
 
 # DB3: the attendee's Postgres instance that Liquibase manages in Labs 6-9.
-# The member endpoint reads the Liquibase-owned `users` table from it. Django's own
+# The member endpoint reads the Liquibase-owned `members` table from it. Django's own
 # tables (auth, sessions, RequestEntry) stay in SQLite, and MembersDbRouter stops
 # `migrate` from ever touching this database. Without DB_HOST, the member endpoint
 # reads SQLite instead (local runs and tests).
